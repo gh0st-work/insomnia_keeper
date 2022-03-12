@@ -1,0 +1,14 @@
+[Unit]
+Description=uWSGI Emperor service
+
+[Service]
+ExecStartPre=/bin/bash -c 'mkdir -p /run/uwsgi; chown gh0st:gh0st /run/uwsgi'
+ExecStart=/usr/bin/uwsgi --emperor /etc/uwsgi/apps-enabled
+ExecStopPost=/bin/rm -f /run/nginx.pid
+Restart=always
+KillSignal=SIGQUIT
+Type=notify
+NotifyAccess=all
+
+[Install]
+WantedBy=multi-user.target
