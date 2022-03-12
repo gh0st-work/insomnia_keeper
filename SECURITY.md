@@ -4,6 +4,6 @@
 
 Please add:
 - Link to the commit
-- File and line (if possible)
+- Path to the file and line number (if possible)
 - Description
 - How to fix
