@@ -19,7 +19,7 @@ Backend TODO:
 
 Frontend TODO:
 - [ ] Auth screen
-  - [ ] Agreement about "F*ck war"
+  - [ ] Agreement about "F*ck war, make peace, w33d, love & money"
 - [ ] Intro screen
 - [ ] Wallets and balances listing
 - [ ] Transfer/payments page
