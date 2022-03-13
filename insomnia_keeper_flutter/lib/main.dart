@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:insomnia_keeper_flutter/widgets/lock_screen.dart';
 import 'package:insomnia_keeper_flutter/widgets/root.dart';
 
 import 'data/store.dart';
@@ -20,8 +22,12 @@ class App extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.deepPurple,
         ),
-        home: Root(),
+        home: LockScreen(),
       )
     );
   }
 }
+
+
+
+
