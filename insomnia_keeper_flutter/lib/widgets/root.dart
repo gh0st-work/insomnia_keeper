@@ -6,9 +6,12 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:insomnia_keeper_flutter/data/global/actions.dart';
 import 'package:insomnia_keeper_flutter/data/personalAccount/actions.dart';
 import 'package:insomnia_keeper_flutter/data/profile/actions.dart';
-import 'package:insomnia_keeper_flutter/data/ui/reducer.dart';
 import 'package:insomnia_keeper_flutter/misc/flutter_redux_hooks.dart';
 import 'package:insomnia_keeper_flutter/settings.dart' as settings;
+import 'package:insomnia_keeper_flutter/widgets/lock_screen2.dart';
+
+import '../data/misc.dart';
+import '../misc/to_bool.dart';
 
 class Root extends HookWidget {
   const Root({Key? key}) : super(key: key);
@@ -30,13 +33,13 @@ class Root extends HookWidget {
 		const postLoadingDelay = 500;
 
     useEffect(() {
-      dispatch(getGlobal());
-      dispatch(getProfile());
-      dispatch(getPersonalAccount());
+      reactDispatch(dispatch, getGlobal());
+      reactDispatch(dispatch, getProfile());
+      reactDispatch(dispatch, getPersonalAccount());
     }, []);
 
 		getTitle () {
-			if (global?.site_name) {
+			if (toBool(global?.site_name)) {
 				String newTitle = global.site_name;
 				if (titles.length) {
 					newTitle += ' | ' + titles.join(' - ');
@@ -51,12 +54,12 @@ class Root extends HookWidget {
 
 		useEffect(() {
 			Timer checkGlobalTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
-				dispatch(updateGlobal());
+				reactDispatch(dispatch, updateGlobal());
 			});
 			return () => checkGlobalTimer.cancel();
 		}, []);
 
-		final globalAvailable = global?.active;
+		final globalAvailable = toBool(global?.active);
 
 		useEffect(() {
 			if (!globalLoading && globalAvailable && !allLoading) {
@@ -74,55 +77,27 @@ class Root extends HookWidget {
 
 		final windowDimensions = MediaQuery.of(context).size;
 
-		// useEffect(() {
-		//   dispatch(setUIWindowDimensions(windowDimensionsNative))
-		// }, [windowDimensionsNative])
-		//
-		// const getWindowDimension = () {
-		//
-		//   const getNative = () {
-		//     return {
-		//       height: windowDimensionsNative?.height,
-		//       width: windowDimensionsNative?.width,
-		//     }
-		//   }
-		//
-		//   return getNative()
-		//
-		//   try {
-		//     if (window.innerHeight && window.innerWidth) {
-		//       return {
-		//         height: window.innerHeight,
-		//         width: window.innerWidth,
-		//       }
-		//     } else {
-		//       return getNative()
-		//     }
-		//   } catch (e) {
-		//     return getNative()
-		//   }
-		// }
-		//
-		// const windowDimensions = getWindowDimension()
-		//
-		// useEffect(() {
-		//   if (UIWindowDimensions?.height !== windowDimensions?.height && UIWindowDimensions?.width !== windowDimensions?.width) {
-		//     dispatch(setUIWindowDimensions(windowDimensions))
-		//   }
-		// }, [windowDimensions])
 
+		const noAPIDebug = true;
 
-
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-				child: (globalLoading ? Text('global loading') : (
+		final APIStatus = (
+				globalLoading ?
+				Text('global loading') : (
 					globalAvailable ? (
 						postLoading.value ? Text('post loading') : Text('content')
 					) : (
 						Text('global not available')
 					)
-				)),
+				)
+		);
+
+		final mainChild = (noAPIDebug ? LockScreen() : APIStatus);
+
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+				child: mainChild,
 			),
     );
   }

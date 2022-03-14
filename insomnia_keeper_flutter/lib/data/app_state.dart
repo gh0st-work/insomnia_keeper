@@ -2,10 +2,9 @@ import 'package:insomnia_keeper_flutter/data/misc.dart';
 import 'package:insomnia_keeper_flutter/data/personalAccount/reducer.dart';
 import 'package:insomnia_keeper_flutter/data/profile/reducer.dart';
 import 'package:insomnia_keeper_flutter/data/ui/reducer.dart';
-import 'package:redux/redux.dart';
+import 'package:insomnia_keeper_flutter/data/global/reducer.dart';
 import 'package:redux_thunk/redux_thunk.dart';
-
-import 'global/reducer.dart';
+import 'package:redux/redux.dart' show Store;
 
 class AppState {
   final GlobalReducerData global;
@@ -20,15 +19,17 @@ class AppState {
   );
 }
 
-AppState appStateReducer(AppState state, dynamic action) => AppState(
+AppState appStateReducer(AppState state, ReduxAction action) => AppState(
   globalReducer(state.global, action),
   personalAccountReducer(state.personalAccount, action),
   profileReducer(state.profile, action),
   uiReducer(state.ui, action),
 );
 
+AppState appStateReducerDynamic(AppState state, dynamic action) => appStateReducer(state, ReduxAction.fromDynamic(action));
+
 final Store<AppState> store = Store<AppState>(
-  appStateReducer,
+  appStateReducerDynamic,
   initialState: AppState(
     GlobalReducerData(),
     PersonalAccountReducerData(),

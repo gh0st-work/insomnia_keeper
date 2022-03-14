@@ -1,25 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class LockScreen extends StatefulWidget{
+class LockScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _LockScreenState();
 }
 
-class _LockScreenState extends State<LockScreen>{
+class _LockScreenState extends State<LockScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
-            gradient: LinearGradient(
-                colors: [
-                  Colors.deepPurpleAccent,
-                  Colors.deepPurple,
-                ],
-                begin: Alignment.topRight
-            )
-        ),
+            gradient: LinearGradient(colors: [
+          Colors.deepPurpleAccent,
+          Colors.deepPurple,
+        ], begin: Alignment.topRight)),
         child: PassCode(),
       ),
     );
@@ -34,7 +30,7 @@ class PassCode extends StatefulWidget {
 }
 
 class _PassCodeState extends State<PassCode> {
-  List<String> currentPin = ["","","",""];
+  List<String> currentPin = ["", "", "", ""];
   TextEditingController pinOneController = TextEditingController();
   TextEditingController pinTwoController = TextEditingController();
   TextEditingController pinThreeController = TextEditingController();
@@ -42,8 +38,7 @@ class _PassCodeState extends State<PassCode> {
 
   var outLineInputBorder = OutlineInputBorder(
       borderRadius: BorderRadius.circular(10.0),
-      borderSide: BorderSide(color: Colors.transparent)
-  );
+      borderSide: BorderSide(color: Colors.transparent));
 
   int pinIndex = 0;
 
@@ -53,27 +48,30 @@ class _PassCodeState extends State<PassCode> {
       child: Column(
         children: <Widget>[
           buildExitButton(),
-
           Container(
-            alignment: Alignment(0,0.6),
+            alignment: Alignment(0, 0.6),
             padding: EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 buildSecurityText(),
-                SizedBox(height: 40.0,),
+                SizedBox(
+                  height: 40.0,
+                ),
                 buildPinRow(),
               ],
             ),
           ),
-          SizedBox(height: 50,),
+          SizedBox(
+            height: 50,
+          ),
           buildNumberPad(),
         ],
       ),
     );
   }
 
-  buildNumberPad(){
+  buildNumberPad() {
     return Expanded(
       child: Container(
           alignment: Alignment.topCenter,
@@ -84,69 +82,60 @@ class _PassCodeState extends State<PassCode> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   KeyboardNumber(
-                      n:1,
-                      onPressed: (){
+                      n: 1,
+                      onPressed: () {
                         pinIndexSetup("1");
-                      }
-                  ),
+                      }),
                   KeyboardNumber(
-                      n:2,
-                      onPressed: (){
+                      n: 2,
+                      onPressed: () {
                         pinIndexSetup("2");
-                      }
-                  ),
+                      }),
                   KeyboardNumber(
-                      n:3,
-                      onPressed: (){
+                      n: 3,
+                      onPressed: () {
                         pinIndexSetup("3");
-                      }
-                  ),
+                      }),
                 ],
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   KeyboardNumber(
-                      n:4,
-                      onPressed: (){
+                      n: 4,
+                      onPressed: () {
                         pinIndexSetup("4");
-                      }
-                  ),
+                      }),
                   KeyboardNumber(
-                      n:5,
-                      onPressed: (){
+                      n: 5,
+                      onPressed: () {
                         pinIndexSetup("5");
-                      }
-                  ),
+                      }),
                   KeyboardNumber(
-                      n:6,
-                      onPressed: (){
+                      n: 6,
+                      onPressed: () {
                         pinIndexSetup("6");
-                      }
-                  ),
+                      }),
                 ],
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   KeyboardNumber(
-                      n:7,
-                      onPressed: (){
+                      n: 7,
+                      onPressed: () {
                         pinIndexSetup("7");
-                      }
-                  ),
+                      }),
                   KeyboardNumber(
-                      n:8,
-                      onPressed: (){
+                      n: 8,
+                      onPressed: () {
                         pinIndexSetup("8");
-                      }
-                  ),
+                      }),
                   KeyboardNumber(
-                      n:9,
-                      onPressed: (){
+                      n: 9,
+                      onPressed: () {
                         pinIndexSetup("9");
-                      }
-                  ),
+                      }),
                 ],
               ),
               Row(
@@ -159,7 +148,7 @@ class _PassCodeState extends State<PassCode> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(60.0),
                       ),
-                      onPressed: (){},
+                      onPressed: () {},
                       child: const FaIcon(
                         FontAwesomeIcons.fingerprint,
                         color: Colors.white,
@@ -167,11 +156,10 @@ class _PassCodeState extends State<PassCode> {
                     ),
                   ),
                   KeyboardNumber(
-                      n:0,
-                      onPressed: (){
+                      n: 0,
+                      onPressed: () {
                         pinIndexSetup("0");
-                      }
-                  ),
+                      }),
                   Container(
                     width: 60.0,
                     child: MaterialButton(
@@ -179,7 +167,7 @@ class _PassCodeState extends State<PassCode> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(60.0),
                       ),
-                      onPressed: (){
+                      onPressed: () {
                         clearPin();
                       },
                       child: const FaIcon(
@@ -191,28 +179,29 @@ class _PassCodeState extends State<PassCode> {
                 ],
               ),
             ],
-          )
-      ),
+          )),
     );
   }
 
-  pinIndexSetup(String text){
-    if (pinIndex == 0)
+  pinIndexSetup(String text) {
+    if (pinIndex == 0) {
       pinIndex = 1;
-    else if (pinIndex < 4)
+    } else if (pinIndex < 4) {
       pinIndex++;
+    }
     setPin(pinIndex, text);
-    currentPin[pinIndex-1] = text;
+    currentPin[pinIndex - 1] = text;
     String strPin = "";
     currentPin.forEach((e) {
       strPin += e;
     });
-    if(pinIndex == 4)
+    if (pinIndex == 4) {
       print(strPin);
+    }
   }
 
-  setPin(int n, String text){
-    switch(n){
+  setPin(int n, String text) {
+    switch (n) {
       case 1:
         pinOneController.text = text;
         break;
@@ -228,17 +217,17 @@ class _PassCodeState extends State<PassCode> {
     }
   }
 
-  clearPin(){
-    if(pinIndex == 0)
+  clearPin() {
+    if (pinIndex == 0) {
       pinIndex = 0;
-    else{
+    } else {
       setPin(pinIndex, "");
-      currentPin[pinIndex-1] = "";
+      currentPin[pinIndex - 1] = "";
       pinIndex--;
     }
   }
 
-  buildPinRow(){
+  buildPinRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
@@ -262,27 +251,30 @@ class _PassCodeState extends State<PassCode> {
     );
   }
 
-  buildExitButton(){
+  buildExitButton() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: MaterialButton(
-            onPressed: (){},
+            onPressed: () {},
             height: 50.0,
             minWidth: 50.0,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(50.0)
             ),
-            child: const Icon(Icons.clear, color: Colors.white,),
+            child: const Icon(
+              Icons.clear,
+              color: Colors.white,
+            ),
           ),
         )
       ],
     );
   }
 
-  buildSecurityText(){
+  buildSecurityText() {
     return const Text(
       "Security Pin",
       style: TextStyle(
@@ -297,7 +289,9 @@ class _PassCodeState extends State<PassCode> {
 class PinNumber extends StatelessWidget {
   final TextEditingController textEditingController;
   final OutlineInputBorder outlineInputBorder;
-  PinNumber({required this.textEditingController, required this.outlineInputBorder});
+
+  PinNumber(
+      {required this.textEditingController, required this.outlineInputBorder});
 
   @override
   Widget build(BuildContext context) {
@@ -327,6 +321,7 @@ class PinNumber extends StatelessWidget {
 class KeyboardNumber extends StatelessWidget {
   final int n;
   final Function() onPressed;
+
   KeyboardNumber({required this.n, required this.onPressed});
 
   @override
@@ -335,25 +330,23 @@ class KeyboardNumber extends StatelessWidget {
       width: 70.0,
       height: 70.0,
       decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.purpleAccent.withOpacity(0.1)
-      ),
+          shape: BoxShape.circle, color: Colors.purpleAccent.withOpacity(0.1)),
       alignment: Alignment.center,
       child: MaterialButton(
         padding: EdgeInsets.all(8.0),
         onPressed: onPressed,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(60.0)
-        ),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(60.0)),
         height: 800.0,
         child: Text(
           "$n",
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: 26*MediaQuery.of(context).textScaleFactor,
+            fontSize: 26 * MediaQuery.of(context).textScaleFactor,
             color: Colors.white,
             fontWeight: FontWeight.bold,
-          ),),
+          ),
+        ),
       ),
     );
   }

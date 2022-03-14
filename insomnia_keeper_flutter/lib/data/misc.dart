@@ -7,6 +7,9 @@ class ReduxAction {
   String type = 'NULL_ACTION';
   dynamic payload = {};
   ReduxAction(this.type, this.payload);
+  static ReduxAction fromDynamic(dynamic dynamicDict) {
+    return ReduxAction(dynamicDict.type, dynamicDict.payload);
+  }
 }
 
 typedef CallToDispatch = Future Function(Dispatch dispatch);
@@ -29,20 +32,24 @@ class BaseAction {
   CallToDispatch get () => (dispatch) async {
     try {
       dispatch(loadingSetter(true));
-      dispatch(setter(fetch()));
+      dispatch(setter(await fetch()));
     } catch (e, s) {
       print(e);
-      print(s);
+      // print(s);
       dispatch(loadingSetter(false));
     }
   };
   CallToDispatch update () => (dispatch) async {
     try {
-      dispatch(setter(fetch()));
+      dispatch(setter(await fetch()));
     } catch (e, s) {
       print(e);
-      print(s);
+      // print(s);
     }
   };
   CallToDispatch getOrUpdate (existingData) => (existingData != null ? update() : get());
+}
+
+reactDispatch (dynamic dispatch, Function dispatchFunc) async {
+  await dispatchFunc(dispatch);
 }

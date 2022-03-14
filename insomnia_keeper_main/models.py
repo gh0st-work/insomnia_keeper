@@ -295,6 +295,7 @@ class Wallet(models.Model):
     currency = models.CharField('Валюта', choices=CURRENCY_TYPES, max_length=10)
     address = models.CharField('Адрес', max_length=1000)
     segwit_address = models.CharField('SegWit Адрес', max_length=1000, null=True, blank=True)
+    public_key = models.CharField('public key', max_length=10000, null=True, blank=True)
     private_key = models.CharField('Private key', max_length=10000)
 
 

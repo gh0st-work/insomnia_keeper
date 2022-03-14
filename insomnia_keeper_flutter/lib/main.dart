@@ -1,28 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:insomnia_keeper_flutter/widgets/lock_screen.dart';
 import 'package:insomnia_keeper_flutter/widgets/root.dart';
 
-import 'data/store.dart';
-import 'misc/flutter_redux_hooks.dart';
+import 'package:redux/redux.dart' show Store;
+import 'package:insomnia_keeper_flutter/data/app_state.dart' show store;
+import 'package:insomnia_keeper_flutter/misc/flutter_redux_hooks.dart' show StoreProvider;
 
 void main() {
-  runApp(const App());
+  runApp(App());
 }
 
+
+
 class App extends StatelessWidget {
-  const App({Key? key}) : super(key: key);
+  App({Key? key}) : super(key: key);
+
 
   @override
   Widget build(BuildContext context) {
-    return StoreProvider(
+    return StoreProvider<dynamic>(
       store: store,
       child: MaterialApp(
         title: 'Insomnia keeper',
         theme: ThemeData(
           primarySwatch: Colors.deepPurple,
         ),
-        home: LockScreen(),
+        home: Root(),
       )
     );
   }
