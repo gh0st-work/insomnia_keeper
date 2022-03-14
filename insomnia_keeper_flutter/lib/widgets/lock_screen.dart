@@ -7,34 +7,35 @@ import '../misc/rem.dart';
 class LockScreen extends HookWidget {
   const LockScreen({Key? key}) : super(key: key);
 
+
+
   @override
   Widget build(BuildContext context) {
 
     const int codeLength = 6;
     final List<int?> initialCode = List<int?>.filled(codeLength, null);
     final code = useState(initialCode);
-    final cursorPosition = useState(0);
-
-    final String codeText = useMemoized(
-      () {
-        if (code.value.every((char) => char != null)) {
-          return code.value.join();
-        } else {
-          return List<int?>.filled(codeLength, 0).join();
-        }
-      },
-      [code.value],
-    );
 
     clearCode () {
       code.value = initialCode;
+    }
+
+    backspace () {
+      List<int?> newCode = [...code.value];
+      int startingFrom = code.value.indexOf(null);
+      if (startingFrom != 0) {
+        newCode.fillRange(startingFrom-1, codeLength - 1, null);
+        code.value = newCode;
+      }
     }
 
     checkCode () {
       bool success = false;
       try {
         // TODO: check code
-        success = true;
+        String resultCode = code.value.join();
+        print(resultCode);
+        // success = true;
       } catch (e, s) {
         success = false;
       }
@@ -49,12 +50,16 @@ class LockScreen extends HookWidget {
     }
 
     addNumber (number) {
-      List<int?> newCode = code.value;
-      int startingFrom = cursorPosition.value;
-      newCode[startingFrom] = number;
-      newCode.fillRange(startingFrom, codeLength-1, null);
-      if (startingFrom == codeLength - 1) {
-        checkCode();
+      List<int?> newCode = [...code.value];
+      int startingFrom = code.value.indexOf(null);
+      if (startingFrom != -1) {
+        int lastIndex = codeLength - 1;
+        newCode[startingFrom] = number;
+        newCode.fillRange((startingFrom + 1 < lastIndex ? startingFrom + 1 : lastIndex), lastIndex, null);
+        code.value = newCode;
+        if (startingFrom >= lastIndex) {
+          checkCode();
+        }
       }
     }
     
@@ -62,13 +67,13 @@ class LockScreen extends HookWidget {
       
     }
     
-    final ExitButton =  Row(
+    Widget ExitButton =  Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: MaterialButton(
-            onPressed: exit(),
+            onPressed: exit,
             height: 50.0,
             minWidth: 50.0,
             shape: RoundedRectangleBorder(
@@ -83,52 +88,40 @@ class LockScreen extends HookWidget {
       ],
     );
 
-    final SecurityText = Text(
-      "Security Code",
-      style: TextStyle(
-        color: Colors.white,
-        fontSize: rem(5),
-        fontWeight: FontWeight.bold,
-      ),
-    );
-
-    final codeControllers = useRef(List.filled(codeLength, TextEditingController()));
-
-    buildCodeNumber (i) {
+    Widget buildCodeNumber (i) {
       final codeNum = code.value[i];
-      return Container(
+      final codeNumText = (codeNum != null ? '*' : '-');
+      return SizedBox(
         width: 50.0,
-        child: TextField(
-          controller: codeControllers.value[i],
-          enabled: false,
-          obscureText: true,
+        child: Text( // TODO: UI
+          codeNumText,
           textAlign: TextAlign.center,
-          decoration: InputDecoration(
-            contentPadding: EdgeInsets.all(rem(4)),
-            border:  OutlineInputBorder(
-              borderRadius: BorderRadius.circular(rem(3)),
-              borderSide: const BorderSide(color: Colors.transparent)
-            ),
-            filled: true,
-            fillColor: Colors.white30,
-          ),
+          // decoration: InputDecoration(
+          //   contentPadding: EdgeInsets.all(rem(4)),
+          //   border:  OutlineInputBorder(
+          //     borderRadius: BorderRadius.circular(rem(3)),
+          //     borderSide: const BorderSide(color: Colors.transparent)
+          //   ),
+          //   filled: true,
+          //   fillColor: Colors.white30,
+          // ),
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: rem(5),
+            fontSize: rem(6),
             color: Colors.white,
           ),
         ),
       );
     }
 
-    final CodeNumbers = List.generate(codeLength, (i) => buildCodeNumber(i));
+    List<Widget> CodeNumbers = useMemoized(() => List.generate(codeLength, (i) => buildCodeNumber(i)), [code.value]);
 
     fingerprint () {
 
     }
 
 
-    buildNumber (int num) {
+    Widget buildNumber (int num) {
       return Container(
         width: 70.0,
         height: 70.0,
@@ -137,8 +130,8 @@ class LockScreen extends HookWidget {
         ),
         alignment: Alignment.center,
         child: MaterialButton(
-          padding: EdgeInsets.all(8.0),
-          onPressed: addNumber(num),
+          padding: const EdgeInsets.all(8.0),
+          onPressed: () => addNumber(num),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(60.0)
           ),
@@ -156,7 +149,7 @@ class LockScreen extends HookWidget {
       );
     }
 
-    final NumberPad = Expanded(
+    Widget NumberPad = Expanded(
       child: Container(
       alignment: Alignment.topCenter,
       child: Column(
@@ -177,14 +170,14 @@ class LockScreen extends HookWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              Container(
+              SizedBox(
                 width: 60.0,
                 child: MaterialButton(
                   height: 60.0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(60.0),
                   ),
-                  onPressed: fingerprint(),
+                  onPressed: fingerprint,
                   child: const FaIcon(
                     FontAwesomeIcons.fingerprint,
                     color: Colors.white,
@@ -192,16 +185,16 @@ class LockScreen extends HookWidget {
                 ),
               ),
               buildNumber(0),
-              Container(
+              SizedBox(
                 width: 60.0,
                 child: MaterialButton(
                   height: 60.0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(60.0),
                   ),
-                  onPressed: clearCode,
+                  onPressed: backspace,
                   child: const FaIcon(
-                    FontAwesomeIcons.arrowLeft,
+                    FontAwesomeIcons.arrowLeft, // TODO: Backspace
                     color: Colors.white,
                   ),
                 ),
@@ -227,23 +220,30 @@ class LockScreen extends HookWidget {
         children: <Widget>[
           ExitButton,
           Container(
-            alignment: Alignment(0, 0.6),
+            alignment: const Alignment(0, 0.6),
             padding: EdgeInsets.symmetric(horizontal: rem(4)),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                SecurityText,
-                SizedBox(
+                Text(
+                  "Security Code",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: rem(5),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(
                   height: 40.0,
                 ),
-                 Row(
+               Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: CodeNumbers,
                 ),
               ],
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 50,
           ),
           NumberPad,
