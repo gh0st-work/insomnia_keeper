@@ -17,24 +17,23 @@ class AppState {
     this.profile,
     this.ui,
   );
-}
-
-AppState appStateReducer(AppState state, ReduxAction action) => AppState(
-  globalReducer(state.global, action),
-  personalAccountReducer(state.personalAccount, action),
-  profileReducer(state.profile, action),
-  uiReducer(state.ui, action),
-);
-
-AppState appStateReducerDynamic(AppState state, dynamic action) => appStateReducer(state, ReduxAction.fromDynamic(action));
-
-final Store<AppState> store = Store<AppState>(
-  appStateReducerDynamic,
-  initialState: AppState(
+  static getInitialState () => AppState(
     GlobalReducerData(),
     PersonalAccountReducerData(),
     ProfileReducerData(),
-    UIReducerData(),
-  ),
+    UIReducerData()
+  );
+  static AppState reducer(AppState state, ReduxAction action) => AppState(
+    globalReducer(state.global, action),
+    personalAccountReducer(state.personalAccount, action),
+    profileReducer(state.profile, action),
+    uiReducer(state.ui, action),
+  );
+  static AppState reducerDynamic(AppState state, dynamic action) => AppState.reducer(state, ReduxAction.fromDynamic(action));
+}
+
+final Store<AppState> store = Store<AppState>(
+  AppState.reducerDynamic,
+  initialState: AppState.getInitialState(),
   middleware: [thunkMiddleware],
 );

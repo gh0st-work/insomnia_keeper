@@ -39,7 +39,7 @@ class Root extends HookWidget {
     }, []);
 
 		getTitle () {
-			if (toBool(global?.site_name)) {
+			if (toBool(global?.site_name)) { // same as react global?.site_name
 				String newTitle = global.site_name;
 				if (titles.length) {
 					newTitle += ' | ' + titles.join(' - ');
