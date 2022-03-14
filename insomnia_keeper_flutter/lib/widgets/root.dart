@@ -8,7 +8,7 @@ import 'package:insomnia_keeper_flutter/data/personalAccount/actions.dart';
 import 'package:insomnia_keeper_flutter/data/profile/actions.dart';
 import 'package:insomnia_keeper_flutter/misc/flutter_redux_hooks.dart';
 import 'package:insomnia_keeper_flutter/settings.dart' as settings;
-import 'package:insomnia_keeper_flutter/widgets/lock_screen2.dart';
+import 'package:insomnia_keeper_flutter/widgets/lock_screen.dart';
 
 import '../data/misc.dart';
 import '../misc/to_bool.dart';
