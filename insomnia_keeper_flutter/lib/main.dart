@@ -21,6 +21,7 @@ class App extends StatelessWidget {
       store: store,
       child: MaterialApp(
         title: 'Insomnia keeper',
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primarySwatch: Colors.deepPurple,
         ),

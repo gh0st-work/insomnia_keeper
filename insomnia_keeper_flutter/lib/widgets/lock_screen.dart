@@ -1,12 +1,11 @@
-import 'package:animated_widgets/widgets/rotation_animated.dart';
-import 'package:animated_widgets/widgets/shake_animated_widget.dart';
-import 'package:animated_widgets/widgets/translation_animated.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:insomnia_keeper_flutter/widgets/wallet_screen.dart';
+import 'package:local_auth/local_auth.dart';
 
+import '../cache/storage.dart';
 import '../misc/rem.dart';
 import 'animations.dart';
 
@@ -20,7 +19,58 @@ class LockScreen extends HookWidget {
     const int codeLength = 4;
     final List<int?> initialCode = List<int?>.filled(codeLength, null);
     final code = useState(initialCode);
+    final realCode = storageGet('lock-code') ?? '1234';
     final badCodeShaking = useState(false);
+    final localAuth = LocalAuthentication();
+    final canCheckBiometrics = useState(false);
+    final availableBiometrics = useState([]);
+    final faceIdAvailable = availableBiometrics.value.contains(BiometricType.face);
+    final fingerprintAvailable = availableBiometrics.value.contains(BiometricType.fingerprint);
+    // TODO: Bruteforce defence
+
+
+
+    loadBiometrics () async {
+      bool canCheckBiometricsNew = await localAuth.canCheckBiometrics;
+      canCheckBiometrics.value = canCheckBiometricsNew;
+      if (canCheckBiometricsNew) {
+        List<BiometricType> availableBiometricsNew = await localAuth.getAvailableBiometrics();
+        availableBiometrics.value = availableBiometricsNew;
+      }
+    }
+
+    useEffect(() {
+      loadBiometrics();
+    }, []);
+
+    authBiometrics () async {
+      var localAuth = LocalAuthentication();
+      bool didAuthenticate = await localAuth.authenticate(
+        stickyAuth: true,
+        localizedReason: 'Please authenticate to show account balance',
+        biometricOnly: true
+      );
+    }
+
+
+    IconData? BiometricsIcon = (faceIdAvailable ? FontAwesomeIcons.smile : (
+      fingerprintAvailable ? FontAwesomeIcons.fingerprint : null
+    ));
+
+
+    Widget? BiometricsButton = (faceIdAvailable || fingerprintAvailable ? (
+      MaterialButton(
+        height: 60.0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(60.0),
+        ),
+        onPressed: authBiometrics,
+        child: FaIcon(
+          BiometricsIcon,
+          color: Colors.white,
+        ),
+      )
+    ) : null);
 
     clearCode () {
       code.value = initialCode;
@@ -40,7 +90,7 @@ class LockScreen extends HookWidget {
       try {
         // TODO: check code from
         String resultCode = code.value.join();
-        print(resultCode);
+        success = (resultCode == realCode);
       } catch (e, s) {
         success = false;
       }
@@ -53,7 +103,6 @@ class LockScreen extends HookWidget {
           ),
           (Route<dynamic> route) => false,
         );
-        
       } else {
         badCodeShaking.value = true;
         clearCode();
@@ -73,7 +122,7 @@ class LockScreen extends HookWidget {
         }
       }
     }
-    
+
     exit () {
       SystemNavigator.pop();
     }
@@ -99,33 +148,19 @@ class LockScreen extends HookWidget {
       ],
     );
 
-    Widget buildCodeNumber (i) {
-      final codeNum = code.value[i];
-      final codeNumEntered = (codeNum != null);
-      final normalColor = (!codeNumEntered ? Colors.white.withOpacity(0.2) : Colors.white.withOpacity(0.8));
-      final color = (badCodeShaking.value ? Colors.redAccent : normalColor);
 
-
-      return FaIcon(
-        FontAwesomeIcons.solidCircle,
-        color: color,
-        size: rem(8),
-      );
-    }
-
-
-
-    Widget CodeNumbers = ShakeAnimation(
+    Widget CodeNumbers = AttentionShakeAnimation(
       animateState: badCodeShaking,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: List.generate(codeLength, (i) => buildCodeNumber(i)),
+        children: code.value.map((codeNum) => CodeNumber(
+          numEntered: codeNum != null,
+          wrong: badCodeShaking.value
+        )).toList(),
       )
     );
 
-    fingerprint () {
 
-    }
 
 
     Widget buildNumber (int num) {
@@ -179,17 +214,7 @@ class LockScreen extends HookWidget {
             children: <Widget>[
               SizedBox(
                 width: 60.0,
-                child: MaterialButton(
-                  height: 60.0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(60.0),
-                  ),
-                  onPressed: fingerprint,
-                  child: const FaIcon(
-                    FontAwesomeIcons.fingerprint,
-                    color: Colors.white,
-                  ),
-                ),
+                child: BiometricsButton,
               ),
               buildNumber(0),
               SizedBox(
@@ -225,10 +250,9 @@ class LockScreen extends HookWidget {
       ),
       child: Column(
         children: <Widget>[
-          ExitButton,
+          // ExitButton,
           Container(
-            alignment: const Alignment(0, 0.6),
-            padding: EdgeInsets.symmetric(horizontal: rem(4)),
+            padding: EdgeInsets.all(rem(8)),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
@@ -241,18 +265,50 @@ class LockScreen extends HookWidget {
                   ),
                 ),
                 const SizedBox(
-                  height: 40.0,
+                  height: 60.0,
                 ),
                 CodeNumbers,
               ],
             ),
           ),
-          const SizedBox(
-            height: 50,
-          ),
           NumberPad,
         ],
       ),
     );
+  }
+}
+
+class CodeNumber extends HookWidget {
+  bool numEntered = false;
+  bool wrong = false;
+  CodeNumber({
+    Key? key,
+    this.numEntered = false,
+    this.wrong = false,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final color = (wrong ? Colors.redAccent : Colors.white.withOpacity(0.8));
+
+    return Container(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        // borderRadius: BorderRadius.circular(100),
+        border: Border.all(width: rem(1), color: color),
+      ),
+      child: ToggleZoomAnimation(
+        zoom: numEntered,
+        child: Container(
+          height: rem(5),
+          width: rem(5),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: color,
+          ),
+        ),
+      )
+    );
+
   }
 }
