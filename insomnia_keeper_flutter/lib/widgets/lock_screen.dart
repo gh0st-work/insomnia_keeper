@@ -43,13 +43,26 @@ class LockScreen extends HookWidget {
       loadBiometrics();
     }, []);
 
+    authenticated () {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => WalletScreen()
+        ),
+        (Route<dynamic> route) => false,
+      );
+    }
+
     authBiometrics () async {
       var localAuth = LocalAuthentication();
       bool didAuthenticate = await localAuth.authenticate(
         stickyAuth: true,
-        localizedReason: 'Please authenticate to show account balance',
+        localizedReason: 'Please authenticate',
         biometricOnly: true
       );
+      if (didAuthenticate) {
+        authenticated()
+      }
     }
 
 
@@ -96,13 +109,7 @@ class LockScreen extends HookWidget {
       }
       
       if (success) {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (context) => WalletScreen()
-          ),
-          (Route<dynamic> route) => false,
-        );
+        authenticated();
       } else {
         badCodeShaking.value = true;
         clearCode();
