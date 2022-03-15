@@ -61,7 +61,7 @@ class LockScreen extends HookWidget {
         biometricOnly: true
       );
       if (didAuthenticate) {
-        authenticated()
+        authenticated();
       }
     }
 
