@@ -57,6 +57,7 @@ class LockScreen extends HookWidget {
       var localAuth = LocalAuthentication();
       bool didAuthenticate = await localAuth.authenticate(
         stickyAuth: true,
+        useErrorDialogs: true,
         localizedReason: 'Please authenticate',
         biometricOnly: true
       );

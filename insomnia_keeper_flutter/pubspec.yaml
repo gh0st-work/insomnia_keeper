@@ -44,6 +44,8 @@ dependencies:
   font_awesome_flutter: '>= 4.7.0'
   animated_widgets: ^1.1.0
   local_auth: ^1.1.11
+  intl: ^0.17.0
+  fl_chart: ^0.46.0
 
 dev_dependencies:
   flutter_test:
