@@ -6,7 +6,7 @@ import 'package:insomnia_keeper_flutter/data/app_state.dart' show store;
 import 'package:insomnia_keeper_flutter/misc/flutter_redux_hooks.dart' show StoreProvider;
 
 void main() {
-  runApp(App());
+  runApp(const App());
 }
 
 

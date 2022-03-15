@@ -1,11 +1,14 @@
+import 'package:animated_widgets/widgets/rotation_animated.dart';
+import 'package:animated_widgets/widgets/shake_animated_widget.dart';
+import 'package:animated_widgets/widgets/translation_animated.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:animated_widgets/animated_widgets.dart';
 import 'package:insomnia_keeper_flutter/widgets/wallet_screen.dart';
 
 import '../misc/rem.dart';
+import 'animations.dart';
 
 class LockScreen extends HookWidget {
   const LockScreen({Key? key}) : super(key: key);
@@ -14,11 +17,10 @@ class LockScreen extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool _enable = false;
-    const int codeLength = 6;
-    const String currentCode = "123456";
+    const int codeLength = 4;
     final List<int?> initialCode = List<int?>.filled(codeLength, null);
     final code = useState(initialCode);
+    final badCodeShaking = useState(false);
 
     clearCode () {
       code.value = initialCode;
@@ -36,11 +38,8 @@ class LockScreen extends HookWidget {
     checkCode () {
       bool success = false;
       try {
-        // TODO: check code
+        // TODO: check code from
         String resultCode = code.value.join();
-        if(currentCode == resultCode) {
-          success = true;
-        }
         print(resultCode);
       } catch (e, s) {
         success = false;
@@ -49,14 +48,14 @@ class LockScreen extends HookWidget {
       if (success) {
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => WalletScreen()),
-              (Route<dynamic> route) => false,
+          MaterialPageRoute(
+            builder: (context) => WalletScreen()
+          ),
+          (Route<dynamic> route) => false,
         );
         
       } else {
-        _enable = true;
-        print(success);
-        // TODO: shake, then
+        badCodeShaking.value = true;
         clearCode();
       }
     }
@@ -102,50 +101,27 @@ class LockScreen extends HookWidget {
 
     Widget buildCodeNumber (i) {
       final codeNum = code.value[i];
-      final codeNumText = (codeNum != null ? '*' : '');
-      return Container(
-        width: 50.0,
-        height: 60.0,
-        child: Center(
-          child: Text(
-            codeNumText,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: rem(6),
-              color: Colors.white,
-            ),
-          ),
-        ),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-              colors: [
-                Colors.blueGrey.withOpacity(0.4),
-                Colors.grey.withOpacity(0.2),
-              ],
-              begin: Alignment.topRight
-          ),
-          shape: BoxShape.rectangle,
-          borderRadius: BorderRadius.circular(10.0),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              spreadRadius: 1,
-              blurRadius: 1,
-              offset: const Offset(1, 2),
-            ),
-          ],
-        ),
+      final codeNumEntered = (codeNum != null);
+      final normalColor = (!codeNumEntered ? Colors.white.withOpacity(0.2) : Colors.white.withOpacity(0.8));
+      final color = (badCodeShaking.value ? Colors.redAccent : normalColor);
+
+
+      return FaIcon(
+        FontAwesomeIcons.solidCircle,
+        color: color,
+        size: rem(8),
       );
     }
 
-    List<Widget> CodeNumbers = useMemoized(() => List.generate(codeLength, (i) => buildCodeNumber(i)), [code.value]);
 
-    Widget _codeNumbers(){
-      return Row(
+
+    Widget CodeNumbers = ShakeAnimation(
+      animateState: badCodeShaking,
+      child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: CodeNumbers,
-      );
-    }
+        children: List.generate(codeLength, (i) => buildCodeNumber(i)),
+      )
+    );
 
     fingerprint () {
 
@@ -225,7 +201,7 @@ class LockScreen extends HookWidget {
                   ),
                   onPressed: backspace,
                   child: const FaIcon(
-                    FontAwesomeIcons.arrowLeft, // TODO: Backspace
+                    FontAwesomeIcons.backspace,
                     color: Colors.white,
                   ),
                 ),
@@ -267,17 +243,7 @@ class LockScreen extends HookWidget {
                 const SizedBox(
                   height: 40.0,
                 ),
-               // Row(
-               //    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-               //    children: CodeNumbers,
-               //  ),
-                ShakeAnimatedWidget(
-                  enabled: _enable,
-                  duration: const Duration(milliseconds: 500),
-                  shakeAngle: Rotation.deg(y: 40),
-                  curve: Curves.linear,
-                  child: _codeNumbers(),
-                ),
+                CodeNumbers,
               ],
             ),
           ),
