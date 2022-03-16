@@ -75,11 +75,11 @@ class CoinScreen extends HookWidget{
       alignment:  Alignment.bottomCenter,
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: rem(5), vertical: rem(2)),
-        child: PillButton(
-          label: "Trade",
-          color: Colors.purple,
-          radius: 200,
+        child: ElevatedButton( // TODO: full width
           onPressed: (){},
+          child: Text(
+            'Trade',
+          ),
         ),
       ),
     );
@@ -90,7 +90,7 @@ class CoinScreen extends HookWidget{
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.purple[600],
+        // backgroundColor: Colors.purple[600],
         title: Text(title),
         centerTitle: true,
       ),

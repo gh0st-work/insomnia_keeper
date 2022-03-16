@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:insomnia_keeper_flutter/data/global/actions.dart';
@@ -12,6 +13,7 @@ import 'package:insomnia_keeper_flutter/widgets/lock_screen.dart';
 
 import '../data/misc.dart';
 import '../misc/to_bool.dart';
+import 'navigation_screen.dart';
 
 class Root extends HookWidget {
   const Root({Key? key}) : super(key: key);
@@ -25,6 +27,7 @@ class Root extends HookWidget {
     final profileLoading = useSelector((state) => state.profile.loading);
     final personalAccountLoading = useSelector((state) => state.personalAccount.loading);
     final titles = useSelector((state) => state.ui.titles);
+		final currentThemeMode = useSelector((state) => state.ui.currentThemeMode);
 
     final allLoading = (personalAccountLoading || profileLoading);
 
@@ -75,30 +78,8 @@ class Root extends HookWidget {
 			}
 		}, [globalAvailable]);
 
-		final windowDimensions = MediaQuery.of(context).size;
-
-
-		const noAPIDebug = true;
-
-		final APIStatus = (
-				globalLoading ?
-				Text('global loading') : (
-					globalAvailable ? (
-						postLoading.value ? Text('post loading') : Text('content')
-					) : (
-						Text('global not available')
-					)
-				)
+    return const Scaffold(
+			body: NavigationScreen(),
 		);
-
-		final mainChild = (noAPIDebug ? LockScreen() : APIStatus);
-
-
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-				child: mainChild,
-			),
-    );
   }
 }

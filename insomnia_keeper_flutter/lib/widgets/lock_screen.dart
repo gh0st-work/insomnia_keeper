@@ -2,12 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:insomnia_keeper_flutter/misc/flutter_redux_hooks.dart';
 import 'package:insomnia_keeper_flutter/widgets/wallet_screen.dart';
 import 'package:local_auth/local_auth.dart';
 
 import '../cache/storage.dart';
+import '../data/ui/reducer.dart';
+import '../misc/buttons.dart';
+import '../misc/plasmas.dart';
 import '../misc/rem.dart';
 import 'animations.dart';
+
 
 class LockScreen extends HookWidget {
   const LockScreen({Key? key}) : super(key: key);
@@ -16,6 +21,7 @@ class LockScreen extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dispatch = useDispatch();
     const int codeLength = 4;
     final List<int?> initialCode = List<int?>.filled(codeLength, null);
     final code = useState(initialCode);
@@ -26,6 +32,7 @@ class LockScreen extends HookWidget {
     final availableBiometrics = useState([]);
     final faceIdAvailable = availableBiometrics.value.contains(BiometricType.face);
     final fingerprintAvailable = availableBiometrics.value.contains(BiometricType.fingerprint);
+    final ThemeData theme = Theme.of(context);
     // TODO: Bruteforce defence
 
 
@@ -44,13 +51,7 @@ class LockScreen extends HookWidget {
     }, []);
 
     authenticated () {
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (context) => WalletScreen()
-        ),
-        (Route<dynamic> route) => false,
-      );
+      dispatch(setUIUnlocked(true));
     }
 
     authBiometrics () async {
@@ -73,18 +74,17 @@ class LockScreen extends HookWidget {
 
 
     Widget? BiometricsButton = (faceIdAvailable || fingerprintAvailable ? (
-      MaterialButton(
-        height: 60.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(60.0),
-        ),
+      CircleButton(
         onPressed: authBiometrics,
         child: FaIcon(
           BiometricsIcon,
-          color: Colors.white,
+          size: rem(6),
         ),
       )
-    ) : null);
+    ) : SizedBox(
+      height: rem(16),
+      width: rem(16),
+    ));
 
     clearCode () {
       code.value = initialCode;
@@ -134,27 +134,6 @@ class LockScreen extends HookWidget {
     exit () {
       SystemNavigator.pop();
     }
-    
-    Widget ExitButton =  Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: MaterialButton(
-            onPressed: exit,
-            height: 50.0,
-            minWidth: 50.0,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(50.0)
-            ),
-            child: const Icon(
-              Icons.clear,
-              color: Colors.white,
-            ),
-          ),
-        )
-      ],
-    );
 
 
     Widget CodeNumbers = AttentionShakeAnimation(
@@ -172,28 +151,14 @@ class LockScreen extends HookWidget {
 
 
     Widget buildNumber (int num) {
-      return Container(
-        width: 70.0,
-        height: 70.0,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle, color: Colors.purpleAccent.withOpacity(0.1)
-        ),
-        alignment: Alignment.center,
-        child: MaterialButton(
-          padding: const EdgeInsets.all(8.0),
-          onPressed: () => addNumber(num),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(60.0)
-          ),
-          height: 800.0,
-          child: Text(
-            "$num",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: rem(6),
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
+      return CircleButton(
+        onPressed: () => addNumber(num),
+        child: Text(
+          "$num",
+          style: TextStyle(
+            fontSize: rem(6),
+            // height: rem(4),
+            fontWeight: FontWeight.bold,
           ),
         ),
       );
@@ -219,69 +184,50 @@ class LockScreen extends HookWidget {
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              SizedBox(
-                width: 60.0,
-                child: BiometricsButton,
-              ),
+            children: [
+              BiometricsButton,
               buildNumber(0),
-              SizedBox(
-                width: 60.0,
-                child: MaterialButton(
-                  height: 60.0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(60.0),
-                  ),
-                  onPressed: backspace,
-                  child: const FaIcon(
-                    FontAwesomeIcons.backspace,
-                    color: Colors.white,
-                  ),
+              CircleButton(
+                onPressed: backspace,
+                child: FaIcon(
+                  FontAwesomeIcons.backspace,
+                  size: rem(6),
                 ),
-              ),
+              )
             ],
           ),
         ],
       )),
     );
 
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: 
-        LinearGradient(
-          colors: [
-            Colors.deepPurpleAccent,
-            Colors.deepPurple,
-          ],
-          begin: Alignment.topRight
-        )
-      ),
-      child: Column(
-        children: <Widget>[
-          // ExitButton,
-          Container(
-            padding: EdgeInsets.all(rem(8)),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Text(
-                  "Security Code",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: rem(7),
-                    fontWeight: FontWeight.bold,
-                  ),
+    return Stack(
+      children: [
+        // lockScreenPlasma,
+        Container(
+          padding: EdgeInsets.symmetric(vertical: rem(15)),
+          // decoration: BoxDecoration(
+          //   color: theme.backgroundColor.withOpacity(0.6),
+          //   backgroundBlendMode: BlendMode.srcOver,
+          // ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(
+                "Security Code",
+                style: TextStyle(
+                  fontSize: rem(8),
+                  fontWeight: FontWeight.bold,
                 ),
-                const SizedBox(
-                  height: 60.0,
-                ),
-                CodeNumbers,
-              ],
-            ),
+              ),
+              SizedBox(height: rem(15)),
+              CodeNumbers,
+              SizedBox(height: rem(15)),
+              NumberPad,
+            ],
           ),
-          NumberPad,
-        ],
-      ),
+        )
+      ]
     );
   }
 }
@@ -297,7 +243,10 @@ class CodeNumber extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = (wrong ? Colors.redAccent : Colors.white.withOpacity(0.8));
+
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final color = (wrong ? theme.errorColor : scheme.onBackground);
 
     return Container(
       decoration: BoxDecoration(
@@ -317,6 +266,5 @@ class CodeNumber extends HookWidget {
         ),
       )
     );
-
   }
 }

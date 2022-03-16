@@ -19,11 +19,14 @@ class WalletScreen extends HookWidget{
   }
 
   static List coins = [];
-  static const TextStyle optionStyle =
-  TextStyle(fontSize: 26, fontWeight: FontWeight.bold);
+  static const TextStyle optionStyle = TextStyle(fontSize: 26, fontWeight: FontWeight.bold);
 
-  Widget _buildTitle(BuildContext context){
-    return Row(
+  @override
+  Widget build(BuildContext context) {
+    coins.add(MokCoins("BTC", 100000.0, 23.1, 10));
+    coins.add(MokCoins("TON", 20.0, -3.4, 11));
+    coins.add(MokCoins("ETH", 2000.0, 61.9, 12));
+    Widget Title = Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -36,7 +39,6 @@ class WalletScreen extends HookWidget{
               Text(
                 "Wallet",
                 style: TextStyle(
-                  color: Colors.white,
                   fontWeight: FontWeight.w400,
                   fontSize: 21,
                 ),
@@ -44,7 +46,6 @@ class WalletScreen extends HookWidget{
               Text(
                 "Hello, username!",
                 style: TextStyle(
-                  color: Colors.white,
                   fontWeight: FontWeight.w300,
                   fontSize: 12,
                 ),
@@ -63,50 +64,41 @@ class WalletScreen extends HookWidget{
         )
       ],
     );
-  }
 
-  @override
-  Widget build(BuildContext context) {
-    coins.add(MokCoins("BTC", 100000.0, 23.1, 10));
-    coins.add(MokCoins("TON", 20.0, -3.4, 11));
-    coins.add(MokCoins("ETH", 2000.0, 61.9, 12));
     return Scaffold(
-      backgroundColor: Colors.purple[100],
       body: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
-            backgroundColor: Colors.purple[600],
             pinned: false,
             expandedHeight: MediaQuery.of(context).size.height * 0.2,
             flexibleSpace: FlexibleSpaceBar(
               title: Container(
-                color: Colors.purple[600],
                 padding: EdgeInsets.only(top: 5, left: 5, right: 5),
-                child: _buildTitle(context),
+                child: Title,
               ),
               centerTitle: true,
             ),
           ),
           SliverList(
-              delegate: SliverChildBuilderDelegate(
-                  (BuildContext context, int index){
-                    return Padding(
-                      padding: EdgeInsets.all(5.0),
-                      child: InkWell(
-                        onTap: (){
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => CoinScreen(title:coins[index].title, amount: coins[index].amount,
-                              percentChange: coins[index].percentChange, amountCoins: coins[index].coinsAmount,)),
-                          );
-                          },
-                        child: Coin(title: coins[index].title, amount: coins[index].amount, percentChange: coins[index].percentChange,
-                          coinsAmount: Format.toAmount(coins[index].coinsAmount),),
-                      )
-                    );
-                  },
-                childCount: coins.length
-              )
+            delegate: SliverChildBuilderDelegate(
+              (BuildContext context, int index) {
+                return Padding(
+                  padding: EdgeInsets.all(5.0),
+                  child: InkWell(
+                    onTap: (){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => CoinScreen(title:coins[index].title, amount: coins[index].amount,
+                          percentChange: coins[index].percentChange, amountCoins: coins[index].coinsAmount,)),
+                      );
+                      },
+                    child: Coin(title: coins[index].title, amount: coins[index].amount, percentChange: coins[index].percentChange,
+                      coinsAmount: Format.toAmount(coins[index].coinsAmount),),
+                  )
+                );
+              },
+              childCount: coins.length
+            )
           )
         ],
       ),
@@ -126,7 +118,6 @@ class WalletScreen extends HookWidget{
           ),
         ],
         currentIndex: _selectedMenuIndex,
-        selectedItemColor: Colors.purple[600],
         onTap: _onItemTapped,
       ),
     );

@@ -12,7 +12,7 @@ class Coin extends HookWidget{
   final double percentChange;
   final Amount coinsAmount;
 
-  Coin({
+  const Coin({
     required this.title,
     required this.amount,
     required this.percentChange,
@@ -21,29 +21,29 @@ class Coin extends HookWidget{
 
   Widget _buildCoinsAmount(){
     return Container(
-        padding: const EdgeInsets.only(bottom: 4),
-        child: RichText(
-          text: TextSpan(
-              children: <TextSpan>[
-                TextSpan(
-                    text: coinsAmount.whole.substring(1),
-                    style: const TextStyle(
-                        color: Colors.grey,
-                        fontWeight: FontWeight.w300,
-                        fontSize: 18
-                    )
-                ),
-                TextSpan(
-                    text: ".${coinsAmount.fractional}",
-                    style: const TextStyle(
-                        color: Colors.grey,
-                        fontWeight: FontWeight.w300,
-                        fontSize: 12
-                    )
+      padding: const EdgeInsets.only(bottom: 4),
+      child: RichText(
+        text: TextSpan(
+            children: <TextSpan>[
+              TextSpan(
+                text: coinsAmount.whole.substring(1),
+                style: const TextStyle(
+                    // color: Colors.grey,
+                    fontWeight: FontWeight.w300,
+                    fontSize: 18
                 )
-              ]
-          ),
-        )
+              ),
+              TextSpan(
+                  text: ".${coinsAmount.fractional}",
+                  style: const TextStyle(
+                    // color: Colors.grey,
+                    fontWeight: FontWeight.w300,
+                    fontSize: 12
+                  )
+              )
+            ]
+        ),
+      )
     );
   }
 

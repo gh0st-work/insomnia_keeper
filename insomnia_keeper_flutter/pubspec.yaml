@@ -46,6 +46,10 @@ dependencies:
   local_auth: ^1.1.11
   intl: ^0.17.0
   fl_chart: ^0.46.0
+  flex_color_scheme: ^4.2.0
+  simple_animations: ^4.0.1
+  supercharged: ^2.1.1
+  sa3_liquid: ^1.0.1
 
 dev_dependencies:
   flutter_test:
