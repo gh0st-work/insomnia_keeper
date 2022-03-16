@@ -10,7 +10,7 @@ class Coin extends HookWidget{
   final String title;
   final double amount;
   final double percentChange;
-  final Amount coinsAmount;
+  final double coinsAmount;
 
   const Coin({
     required this.title,
@@ -18,82 +18,126 @@ class Coin extends HookWidget{
     required this.percentChange,
     required this.coinsAmount
   });
-
+  
   Widget _buildCoinsAmount(){
     return Container(
       padding: const EdgeInsets.only(bottom: 4),
-      child: RichText(
-        text: TextSpan(
-            children: <TextSpan>[
-              TextSpan(
-                text: coinsAmount.whole.substring(1),
-                style: const TextStyle(
-                    // color: Colors.grey,
-                    fontWeight: FontWeight.w300,
-                    fontSize: 18
-                )
-              ),
-              TextSpan(
-                  text: ".${coinsAmount.fractional}",
-                  style: const TextStyle(
-                    // color: Colors.grey,
-                    fontWeight: FontWeight.w300,
-                    fontSize: 12
-                  )
-              )
-            ]
-        ),
-      )
+      child: Text(
+        Format.toCompact(coinsAmount),
+          style: const TextStyle(
+              fontWeight: FontWeight.w400,
+              fontSize: 32
+          )
+      ),
     );
   }
 
-  Widget _buildIconTitle(BuildContext context){
+  Widget _buildCoinTitle(){
+    return Container(
+      alignment: Alignment.centerLeft,
+      child: RichText(
+        text: TextSpan(
+            text: title,
+            style: TextStyle(
+              fontWeight: FontWeight.w400,
+              fontSize: rem(6),
+            ),
+          children: [
+            TextSpan(
+              text: "\nFull coin name here",
+              style: TextStyle(
+                  fontWeight: FontWeight.w300,
+                  fontSize: rem(4),
+              ),
+            )
+          ]
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCoinStatus(){
+    final color = (percentChange > 0 ? Colors.greenAccent : Colors.redAccent);
+    return Container(
+      alignment: Alignment.centerLeft,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            "${amount}\$",
+            //"1111.11\$",
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: rem(4),
+            ),
+          ),
+          Text(
+            "${percentChange}%",
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: rem(4),
+              color: color
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCoinInfo(BuildContext context){
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Container(
+          width: MediaQuery.of(context).size.width * 0.45,
+          height: MediaQuery.of(context).size.height * 0.12,
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(color: Color(0xffbfbbbb), width: rem(0.5))
+            )
+          ),
+          child: _buildCoinTitle(),
+        ),
+        Container(
+          width: MediaQuery.of(context).size.width * 0.45,
+          height: MediaQuery.of(context).size.height * 0.065,
+          child: _buildCoinStatus(),
+        )
+      ],
+    );
+  }
+
+  Widget _buildCoinIcon(BuildContext context){
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.25,
+      child: Container(
+        width: rem(14),
+        height: rem(14),
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(width: rem(1), color: Colors.white),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInWalletCoins(BuildContext context){
     return Container(
       width: MediaQuery.of(context).size.width * 0.25,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          //crypto icon here
-          Container(
-            width: rem(10),
-            height: rem(10),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(width: rem(1), color: Colors.white),
-            ),
-          ),
-          SizedBox(height: rem(2),),
+          _buildCoinsAmount(),
           Text(
-            title,
+            "${Format.toCompactCurrency(amount * coinsAmount)}",
             style: TextStyle(
-                color: Colors.purple[800],
-                fontSize: rem(5),
-              fontWeight: FontWeight.w300
+              fontSize: rem(4),
+              fontWeight: FontWeight.w300,
             ),
-          ),
-          _buildCoinsAmount()
+          )
         ],
       ),
-    );
-  }
-
-  Widget _buildCoinPrice(BuildContext context){
-    return Container(
-      width: MediaQuery.of(context).size.width * 0.3,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Price(amount: Format.toAmount(amount), percentChange: percentChange,)
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPriceChart(BuildContext context){
-    final color = (percentChange < 0 ? Colors.redAccent : Colors.greenAccent);
-    return Container(
-      width: MediaQuery.of(context).size.width * 0.4,
-      child: PriceChart(lineColor: color,),
     );
   }
 
@@ -104,8 +148,6 @@ class Coin extends HookWidget{
       width: MediaQuery.of(context).size.width * 0.95,
       height: MediaQuery.of(context).size.height * 0.2,
       decoration: BoxDecoration(
-        color: Colors.grey[300],
-        //border: Border.all(width: 2, color: Colors.grey),
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
@@ -118,9 +160,9 @@ class Coin extends HookWidget{
       ),
       child: Row(
         children: [
-          _buildIconTitle(context),
-          _buildPriceChart(context),
-          _buildCoinPrice(context)
+          _buildCoinIcon(context),
+          _buildCoinInfo(context),
+          _buildInWalletCoins(context)
         ],
       ),
     );

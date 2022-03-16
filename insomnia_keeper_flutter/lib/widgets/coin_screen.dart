@@ -6,7 +6,6 @@ import 'package:insomnia_keeper_flutter/misc/price.dart';
 import 'package:insomnia_keeper_flutter/widgets/asset_price_chart.dart';
 
 import '../misc/format.dart';
-import '../misc/pillbutton.dart';
 import '../misc/rem.dart';
 
 class CoinScreen extends HookWidget{
@@ -75,10 +74,17 @@ class CoinScreen extends HookWidget{
       alignment:  Alignment.bottomCenter,
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: rem(5), vertical: rem(2)),
-        child: ElevatedButton( // TODO: full width
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            minimumSize: const Size.fromHeight(50),
+          ),
           onPressed: (){},
-          child: Text(
+          child: const Text(
             'Trade',
+            style: TextStyle(
+              fontWeight: FontWeight.w300,
+              fontSize: 26
+            ),
           ),
         ),
       ),
@@ -91,7 +97,13 @@ class CoinScreen extends HookWidget{
     return Scaffold(
       appBar: AppBar(
         // backgroundColor: Colors.purple[600],
-        title: Text(title),
+        title: Text(
+            title,
+          style: const TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.w300
+          ),
+        ),
         centerTitle: true,
       ),
 

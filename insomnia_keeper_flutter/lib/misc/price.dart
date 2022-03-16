@@ -53,7 +53,7 @@ class Price extends HookWidget{
                   style: const TextStyle(
                       color: Colors.grey,
                       fontWeight: FontWeight.w300,
-                      fontSize: 12
+                      fontSize: 16
                   )
               )
             ]
@@ -81,7 +81,7 @@ class Price extends HookWidget{
                 style: TextStyle(
                     color: color,
                     fontWeight: FontWeight.w300,
-                    fontSize: 16
+                    fontSize: 20
                 )
             )
           ]
@@ -94,7 +94,7 @@ class Price extends HookWidget{
       Format.toPercent(percentChange),
       style: TextStyle(
         fontSize: 16,
-        fontWeight: FontWeight.w300,
+        fontWeight: FontWeight.w500,
         color: ColorFormatter.percentage(percentChange),
       ),
     );

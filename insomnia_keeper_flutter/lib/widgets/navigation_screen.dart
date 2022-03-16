@@ -6,6 +6,8 @@ import 'package:insomnia_keeper_flutter/misc/flutter_redux_hooks.dart';
 import 'package:insomnia_keeper_flutter/widgets/lock_screen.dart';
 import 'package:insomnia_keeper_flutter/widgets/wallet_screen.dart';
 
+import 'main_screen.dart';
+
 class NavigationScreen extends HookWidget {
   const NavigationScreen({Key? key}) : super(key: key);
 
@@ -32,7 +34,7 @@ class NavigationScreen extends HookWidget {
 
     return Stack(
       children: [
-        SafeArea(child: WalletScreen()),
+        SafeArea(child: MainScreen()),
         ...unlockedStackItems,
       ],
     );

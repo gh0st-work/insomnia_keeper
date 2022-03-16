@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:insomnia_keeper_flutter/misc/price.dart';
-import 'package:insomnia_keeper_flutter/widgets/asset_price_chart.dart';
 import 'package:insomnia_keeper_flutter/widgets/coin_screen.dart';
 import 'package:insomnia_keeper_flutter/widgets/coin_widget.dart';
 
@@ -11,20 +8,14 @@ import '../misc/format.dart';
 import '../misc/rem.dart';
 
 class WalletScreen extends HookWidget{
-  const WalletScreen({Key? key}) : super(key: key);
-
-  final int _selectedMenuIndex = 0;
-  void _onItemTapped(int index) {
-
-  }
 
   static List coins = [];
   static const TextStyle optionStyle = TextStyle(fontSize: 26, fontWeight: FontWeight.bold);
 
   @override
   Widget build(BuildContext context) {
-    coins.add(MokCoins("BTC", 100000.0, 23.1, 10));
-    coins.add(MokCoins("TON", 20.0, -3.4, 11));
+    coins.add(MokCoins("BTC", 100000.0, 23.1, 1258));
+    coins.add(MokCoins("TON", 20.5, -3.4, 11.5));
     coins.add(MokCoins("ETH", 2000.0, 61.9, 12));
     Widget Title = Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -57,7 +48,7 @@ class WalletScreen extends HookWidget{
           height: MediaQuery.of(context).size.height * 0.1,
           padding: EdgeInsets.only(right: 10, top: 5),
           child: Price(
-            amount: Format.toAmount(10.0),
+            amount: Format.toAmount(10.0),//Format.toCompactCurrency(value)
             percentChange: 10.0,
             isTitle: true,
           ),
@@ -93,7 +84,7 @@ class WalletScreen extends HookWidget{
                       );
                       },
                     child: Coin(title: coins[index].title, amount: coins[index].amount, percentChange: coins[index].percentChange,
-                      coinsAmount: Format.toAmount(coins[index].coinsAmount),),
+                      coinsAmount: coins[index].coinsAmount,),
                   )
                 );
               },
@@ -101,24 +92,6 @@ class WalletScreen extends HookWidget{
             )
           )
         ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.wallet_travel_rounded),
-            label: "Wallet",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.price_change),
-            label: 'Exchange',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
-        ],
-        currentIndex: _selectedMenuIndex,
-        onTap: _onItemTapped,
       ),
     );
   }
