@@ -150,20 +150,9 @@ class CoinPreview extends HookWidget {
     final scheme = theme.colorScheme;
 
     return ElevatedButton(
-      // decoration: BoxDecoration(
-      //   borderRadius: BorderRadius.circular(10),
-      //   boxShadow: [
-      //     BoxShadow(
-      //       color: Colors.grey.withOpacity(0.5),
-      //       spreadRadius: 2,
-      //       blurRadius: 3,
-      //       offset: const Offset(1, 2),
-      //     ),
-      //   ],
-      // ),
       style: ElevatedButton.styleFrom(
         primary: theme.cardColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       ),
       onPressed: () {
         Navigator.push(
