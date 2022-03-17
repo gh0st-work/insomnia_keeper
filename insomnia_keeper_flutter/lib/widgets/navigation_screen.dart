@@ -3,6 +3,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:insomnia_keeper_flutter/misc/flutter_redux_hooks.dart';
+import 'package:insomnia_keeper_flutter/widgets/drawer.dart';
+import 'package:insomnia_keeper_flutter/widgets/finger_screen.dart';
 import 'package:insomnia_keeper_flutter/widgets/lock_screen.dart';
 import 'package:insomnia_keeper_flutter/widgets/settings_screen.dart';
 import 'package:insomnia_keeper_flutter/widgets/exchange_screen.dart';
@@ -42,33 +44,7 @@ class NavigationScreen extends HookWidget {
     }
 
     Widget navigation = Scaffold(
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              child: Text(
-                'Insomnia Keeper',
-                style: TextStyle(
-                  fontSize: rem(8),
-                ),
-              ),
-            ),
-            ListTile(
-              leading: Icon(Icons.message),
-              title: Text('Messages'),
-            ),
-            ListTile(
-              leading: Icon(Icons.account_circle),
-              title: Text('Profile'),
-            ),
-            ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('Settings'),
-            ),
-          ],
-        ),
-      ),
+      drawer: AddDrawer(),
       body: PageView(
         controller: pageController,
         children: pages.map((Page page) => page.widget).toList(),
