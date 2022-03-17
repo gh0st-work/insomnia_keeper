@@ -1,6 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:insomnia_keeper_flutter/misc/price.dart';
+import 'package:insomnia_keeper_flutter/widgets/coin_grid_preview.dart';
+import 'package:insomnia_keeper_flutter/widgets/coin_horizontal_preview.dart';
 import 'package:insomnia_keeper_flutter/widgets/coin_screen.dart';
 import 'package:insomnia_keeper_flutter/widgets/coin_preview.dart';
 
@@ -23,6 +26,16 @@ class WalletScreen extends HookWidget {
        MockCoin('BTC', 100000.0, 23.1, 1258),
        MockCoin("TON", 20.5, -3.4, 11.5),
        MockCoin("ETH", 2000.0, 61.9, 12),
+       MockCoin("ETH", 2000.0, 61.9, 12),
+       MockCoin("ETH", 2000.0, 61.9, 12),
+       MockCoin("ETH", 2000.0, 61.9, 12),
+       MockCoin("ETH", 2000.0, 61.9, 12),
+       MockCoin("ETH", 2000.0, 61.9, 12),
+       MockCoin("ETH", 2000.0, 61.9, 12),
+       MockCoin("ETH", 2000.0, 61.9, 12),
+       MockCoin("ETH", 2000.0, 61.9, 12),
+       MockCoin("ETH", 2000.0, 61.9, 12),
+
     ];
     const TextStyle optionStyle = TextStyle(fontSize: 26, fontWeight: FontWeight.bold);
 
@@ -69,29 +82,50 @@ class WalletScreen extends HookWidget {
       body: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
-            pinned: true,
+            automaticallyImplyLeading: false, // this will hide Drawer hamburger icon
+            pinned: false,
             expandedHeight: MediaQuery.of(context).size.height * 0.2,
             flexibleSpace: FlexibleSpaceBar(
               title: Container(
-                padding: EdgeInsets.only(top: 5, left: 5, right: 5),
                 child: Title,
               ),
               centerTitle: true,
             ),
           ),
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (BuildContext context, int index) {
-                MockCoin mockCoin = coins[index];
-                return CoinPreview(
-                  title: mockCoin.title,
-                  amount: mockCoin.amount,
-                  percentChange: mockCoin.percentChange,
-                  coinsAmount: mockCoin.coinsAmount
-                );
-              },
-              childCount: coins.length
-            )
+          SliverToBoxAdapter(
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.15,
+              child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: coins.length,
+                  itemBuilder: (context, index){
+                    MockCoin mockCoin = coins[index];
+                    return CoinHorizontal(
+                        title: mockCoin.title,
+                        amount: mockCoin.amount,
+                        percentChange: mockCoin.percentChange,
+                        coinsAmount: mockCoin.coinsAmount
+                    );
+                  }
+              ),
+            ),
+          ),
+          SliverPadding(
+            padding: EdgeInsets.all(10),
+            sliver: SliverGrid(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                mainAxisSpacing: 10.0,
+                crossAxisSpacing: 10.0,
+              ),
+              delegate: SliverChildBuilderDelegate(
+                    (BuildContext context, int index) {
+                  MockCoin mockCoin = coins[index];
+                  return CoinGrid(amount: mockCoin.amount, coinsAmount: mockCoin.coinsAmount, percentChange: mockCoin.percentChange, title: mockCoin.title,);
+                },
+                childCount: coins.length,
+              ),
+            ),
           )
         ],
       ),
