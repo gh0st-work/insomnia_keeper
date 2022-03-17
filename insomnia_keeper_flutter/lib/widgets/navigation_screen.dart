@@ -4,9 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:insomnia_keeper_flutter/misc/flutter_redux_hooks.dart';
 import 'package:insomnia_keeper_flutter/widgets/lock_screen.dart';
+import 'package:insomnia_keeper_flutter/widgets/settings_screen.dart';
+import 'package:insomnia_keeper_flutter/widgets/exchange_screen.dart';
 import 'package:insomnia_keeper_flutter/widgets/wallet_screen.dart';
 
-import 'main_screen.dart';
+
+class Page {
+  Widget widget = const Text('Page widget');
+  String name = 'Page name';
+  IconData icon = Icons.settings;
+  Page(this.widget, this.name, this.icon);
+}
 
 class NavigationScreen extends HookWidget {
   const NavigationScreen({Key? key}) : super(key: key);
@@ -16,6 +24,38 @@ class NavigationScreen extends HookWidget {
     final unlocked = useSelector((state) => state.ui.unlocked);
     final theme = Theme.of(context);
     final ColorScheme scheme = theme.colorScheme;
+
+    final List<Page> pages = [
+      Page(WalletScreen(), 'Wallet', Icons.account_balance_wallet),
+      Page(ExchangeScreen(), 'Exchange', Icons.swap_horizontal_circle),
+      Page(SettingsScreen(), 'Settings', Icons.settings),
+    ];
+
+    final selectedPageIndex = useState(0);
+    PageController pageController = PageController();
+
+    void onPageChanged(int index) {
+      selectedPageIndex.value = index;
+      pageController.jumpToPage(index);
+    }
+
+    Widget navigation = Scaffold(
+      body: PageView(
+        controller: pageController,
+        children: pages.map((Page page) => page.widget).toList(),
+        onPageChanged: onPageChanged,
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: pages.map((Page page) => (
+          BottomNavigationBarItem(
+            icon: Icon(page.icon),
+            label: page.name,
+          )
+        )).toList(),
+        currentIndex: selectedPageIndex.value,
+        onTap: onPageChanged,
+      ),
+    );
 
 
     final unlockedStackItems = (unlocked ? [] : [
@@ -32,9 +72,11 @@ class NavigationScreen extends HookWidget {
       LockScreen(),
     ]);
 
+
+
     return Stack(
       children: [
-        SafeArea(child: MainScreen()),
+        SafeArea(child: navigation),
         ...unlockedStackItems,
       ],
     );

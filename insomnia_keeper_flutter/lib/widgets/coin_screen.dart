@@ -96,9 +96,8 @@ class CoinScreen extends HookWidget{
 
     return Scaffold(
       appBar: AppBar(
-        // backgroundColor: Colors.purple[600],
         title: Text(
-            title,
+          title,
           style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w300

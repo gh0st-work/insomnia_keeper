@@ -5,19 +5,21 @@ import 'package:insomnia_keeper_flutter/widgets/asset_price_chart.dart';
 
 import '../misc/format.dart';
 import '../misc/rem.dart';
+import 'coin_screen.dart';
 
-class Coin extends HookWidget{
+class CoinPreview extends HookWidget {
   final String title;
   final double amount;
   final double percentChange;
   final double coinsAmount;
 
-  const Coin({
+  const CoinPreview({
+    Key? key,
     required this.title,
     required this.amount,
     required this.percentChange,
     required this.coinsAmount
-  });
+  }) : super(key: key);
   
   Widget _buildCoinsAmount(){
     return Container(
@@ -143,21 +145,37 @@ class Coin extends HookWidget{
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(rem(1)),
-      width: MediaQuery.of(context).size.width * 0.95,
-      height: MediaQuery.of(context).size.height * 0.2,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 2,
-            blurRadius: 3,
-            offset: const Offset(1, 2),
-          ),
-        ],
+
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+
+    return ElevatedButton(
+      // decoration: BoxDecoration(
+      //   borderRadius: BorderRadius.circular(10),
+      //   boxShadow: [
+      //     BoxShadow(
+      //       color: Colors.grey.withOpacity(0.5),
+      //       spreadRadius: 2,
+      //       blurRadius: 3,
+      //       offset: const Offset(1, 2),
+      //     ),
+      //   ],
+      // ),
+      style: ElevatedButton.styleFrom(
+        primary: theme.cardColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       ),
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => CoinScreen(
+            title: title,
+            amount: amount,
+            percentChange: percentChange,
+            amountCoins: coinsAmount
+          )),
+        );
+      },
       child: Row(
         children: [
           _buildCoinIcon(context),

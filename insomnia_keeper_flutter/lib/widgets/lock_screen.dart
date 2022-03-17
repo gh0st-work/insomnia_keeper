@@ -157,7 +157,6 @@ class LockScreen extends HookWidget {
           "$num",
           style: TextStyle(
             fontSize: rem(6),
-            // height: rem(4),
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -205,10 +204,6 @@ class LockScreen extends HookWidget {
         // lockScreenPlasma,
         Container(
           padding: EdgeInsets.symmetric(vertical: rem(15)),
-          // decoration: BoxDecoration(
-          //   color: theme.backgroundColor.withOpacity(0.6),
-          //   backgroundBlendMode: BlendMode.srcOver,
-          // ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.end,
@@ -251,7 +246,6 @@ class CodeNumber extends HookWidget {
     return Container(
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        // borderRadius: BorderRadius.circular(100),
         border: Border.all(width: rem(1), color: color),
       ),
       child: ToggleZoomAnimation(

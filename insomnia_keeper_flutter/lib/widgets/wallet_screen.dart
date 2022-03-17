@@ -2,21 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:insomnia_keeper_flutter/misc/price.dart';
 import 'package:insomnia_keeper_flutter/widgets/coin_screen.dart';
-import 'package:insomnia_keeper_flutter/widgets/coin_widget.dart';
+import 'package:insomnia_keeper_flutter/widgets/coin_preview.dart';
 
 import '../misc/format.dart';
 import '../misc/rem.dart';
 
-class WalletScreen extends HookWidget{
+class MockCoin {
+  String title;
+  double amount;
+  double percentChange;
+  double coinsAmount;
+  MockCoin(this.title, this.amount, this.percentChange, this.coinsAmount);
+}
 
-  static List coins = [];
-  static const TextStyle optionStyle = TextStyle(fontSize: 26, fontWeight: FontWeight.bold);
+class WalletScreen extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    coins.add(MokCoins("BTC", 100000.0, 23.1, 1258));
-    coins.add(MokCoins("TON", 20.5, -3.4, 11.5));
-    coins.add(MokCoins("ETH", 2000.0, 61.9, 12));
+     List<MockCoin> coins = [
+       MockCoin('BTC', 100000.0, 23.1, 1258),
+       MockCoin("TON", 20.5, -3.4, 11.5),
+       MockCoin("ETH", 2000.0, 61.9, 12),
+    ];
+    const TextStyle optionStyle = TextStyle(fontSize: 26, fontWeight: FontWeight.bold);
+
     Widget Title = Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -60,7 +69,7 @@ class WalletScreen extends HookWidget{
       body: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
-            pinned: false,
+            pinned: true,
             expandedHeight: MediaQuery.of(context).size.height * 0.2,
             flexibleSpace: FlexibleSpaceBar(
               title: Container(
@@ -73,19 +82,12 @@ class WalletScreen extends HookWidget{
           SliverList(
             delegate: SliverChildBuilderDelegate(
               (BuildContext context, int index) {
-                return Padding(
-                  padding: EdgeInsets.all(5.0),
-                  child: InkWell(
-                    onTap: (){
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => CoinScreen(title:coins[index].title, amount: coins[index].amount,
-                          percentChange: coins[index].percentChange, amountCoins: coins[index].coinsAmount,)),
-                      );
-                      },
-                    child: Coin(title: coins[index].title, amount: coins[index].amount, percentChange: coins[index].percentChange,
-                      coinsAmount: coins[index].coinsAmount,),
-                  )
+                MockCoin mockCoin = coins[index];
+                return CoinPreview(
+                  title: mockCoin.title,
+                  amount: mockCoin.amount,
+                  percentChange: mockCoin.percentChange,
+                  coinsAmount: mockCoin.coinsAmount
                 );
               },
               childCount: coins.length
@@ -97,11 +99,3 @@ class WalletScreen extends HookWidget{
   }
 }
 
-class MokCoins{
-  String title;
-  double amount;
-  double percentChange;
-  double coinsAmount;
-
-  MokCoins(this.title, this.amount, this.percentChange, this.coinsAmount);
-}

@@ -20,8 +20,8 @@ class Price extends HookWidget{
   });
 
   Widget _buildTitle(BuildContext context){
-    return title != null
-        ? Container(
+    return title != null ?
+    Container(
       padding: EdgeInsets.only(bottom: 4),
       child: Text(
         title!,
@@ -30,8 +30,7 @@ class Price extends HookWidget{
           fontWeight: FontWeight.w300
         ),
       ),
-    )
-        : Container();
+    ) :  Container();
   }
 
   Widget _buildAmountAllCoins(BuildContext context){

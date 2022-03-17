@@ -3,7 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 
 import '../misc/rem.dart';
 
-class TradeScreen extends HookWidget{
+class ExchangeScreen extends HookWidget{
 
   List<Color> colorList = [
     Color(0xff9036f4),
