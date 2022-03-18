@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:insomnia_keeper_flutter/misc/assets.dart';
 import 'package:insomnia_keeper_flutter/misc/chart_filter.dart';
 import 'package:insomnia_keeper_flutter/misc/price.dart';
@@ -21,6 +23,61 @@ class CoinScreen extends HookWidget{
     required this.percentChange
   });
 
+  List tradeButtons = [
+    ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        minimumSize: const Size.fromHeight(50),
+      ),
+      onPressed: (){},
+      child: const Text(
+        'Buy',
+        style: TextStyle(
+            fontWeight: FontWeight.w300,
+            fontSize: 26
+        ),
+      ),
+    ),
+    ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        minimumSize: const Size.fromHeight(50),
+      ),
+      onPressed: (){},
+      child: const Text(
+        'Sell',
+        style: TextStyle(
+            fontWeight: FontWeight.w300,
+            fontSize: 26
+        ),
+      ),
+    ),
+    ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        minimumSize: const Size.fromHeight(50),
+      ),
+      onPressed: (){},
+      child: const Text(
+        'Trade',
+        style: TextStyle(
+            fontWeight: FontWeight.w300,
+            fontSize: 26
+        ),
+      ),
+    ),
+    ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        minimumSize: const Size.fromHeight(50),
+      ),
+      onPressed: (){},
+      child: const Text(
+        'Make a deal',
+        style: TextStyle(
+            fontWeight: FontWeight.w300,
+            fontSize: 26
+        ),
+      ),
+    ),
+  ];
+
   Widget _buildPrice(){
     return Container(
       padding: EdgeInsets.all(rem(10)),
@@ -38,13 +95,6 @@ class CoinScreen extends HookWidget{
       height: MediaQuery.of(context).size.height * 0.3,
       width: MediaQuery.of(context).size.width * 0.95,
       child: PriceChart(lineColor: color),
-    );
-  }
-
-  Widget _buildChartFilter(){
-    return Padding(
-      padding: EdgeInsets.only(left: rem(3)),
-      child: ChartFilter(),
     );
   }
 
@@ -69,25 +119,92 @@ class CoinScreen extends HookWidget{
     );
   }
 
-  Widget _buildButton(){
-    return Align(
-      alignment:  Alignment.bottomCenter,
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: rem(5), vertical: rem(2)),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            minimumSize: const Size.fromHeight(50),
-          ),
-          onPressed: (){},
-          child: const Text(
-            'Trade',
-            style: TextStyle(
-              fontWeight: FontWeight.w300,
-              fontSize: 26
+  Widget _buildButtons(BuildContext context){
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ElevatedButton.icon(
+              icon: FaIcon(
+                FontAwesomeIcons.cartPlus,
+                size: rem(5),
+              ),
+              style: ElevatedButton.styleFrom(
+                minimumSize: Size(MediaQuery.of(context).size.width * 0.4, 50),
+                primary: percentChange > 0 ? Colors.redAccent : Colors.greenAccent
+              ),
+              onPressed: (){},
+              label: const Text(
+                'Buy',
+                style: TextStyle(
+                    fontWeight: FontWeight.w300,
+                    fontSize: 20
+                ),
+              ),
+              //child:
             ),
-          ),
+            ElevatedButton.icon(
+              icon: FaIcon(
+                FontAwesomeIcons.peopleArrows,
+                size: rem(5),
+              ),
+              style: ElevatedButton.styleFrom(
+                minimumSize: Size(MediaQuery.of(context).size.width * 0.4, 50),
+              ),
+              onPressed: (){},
+              label: const Text(
+                'Send',
+                style: TextStyle(
+                    fontWeight: FontWeight.w300,
+                    fontSize: 20
+                ),
+              ),
+            )
+          ],
         ),
-      ),
+        SizedBox(height: MediaQuery.of(context).size.height * 0.05,),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ElevatedButton.icon(
+              icon: FaIcon(
+                FontAwesomeIcons.cartArrowDown,
+                size: rem(5),
+              ),
+              style: ElevatedButton.styleFrom(
+                minimumSize: Size(MediaQuery.of(context).size.width * 0.4, 50),
+                primary: percentChange < 0 ? Colors.redAccent : Colors.greenAccent
+              ),
+              onPressed: (){},
+              label: const Text(
+                'Sell',
+                style: TextStyle(
+                    fontWeight: FontWeight.w300,
+                    fontSize: 20
+                ),
+              ),
+            ),
+            ElevatedButton.icon(
+              icon: FaIcon(
+                FontAwesomeIcons.inbox,
+                size: rem(5),
+              ),
+              style: ElevatedButton.styleFrom(
+                minimumSize: Size(MediaQuery.of(context).size.width * 0.4, 50),
+              ),
+              onPressed: (){},
+              label: const Text(
+                'Receive',
+                style: TextStyle(
+                    fontWeight: FontWeight.w300,
+                    fontSize: 20
+                ),
+              ),
+            )
+          ],
+        ),
+      ],
     );
   }
 
@@ -114,12 +231,12 @@ class CoinScreen extends HookWidget{
             children: <Widget>[
               _buildPrice(),
               _buildPriceChart(context),
-              _buildChartFilter(),
-              _buildStatistics(),
-              _buildDescription(),
+              ChartFilter(),
+              // _buildStatistics(),
+              // _buildDescription(),
             ],
           ),
-          _buildButton()
+          _buildButtons(context)
         ],
       ),
     );
