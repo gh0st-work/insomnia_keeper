@@ -1,0 +1,16 @@
+# Xcode
+*.pbxuser
+!default.pbxuser
+xcuserdata/
+
+# Cocoapods
+Pods/
+
+# Generated files
+cpp.xcconfig
+*.xcodeproj
+*.xcworkspace
+
+# fastlane
+fastlane/README.md
+fastlane/report.xml

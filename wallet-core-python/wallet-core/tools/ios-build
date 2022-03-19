@@ -1,0 +1,60 @@
+#!/bin/bash
+#
+# This script builds a static wallet core common xcframework for iOS devices and simulators.
+#
+
+set -o pipefail
+set -e
+
+FRAMEWORK=WalletCoreCommon
+BUILD_FOLDER=build/ios-frameworks
+
+init() {
+    echo "Cleanup and init..."
+    pushd swift
+    xcodegen -s common-xcframework.yml
+    popd
+
+    rm -rf ${BUILD_FOLDER}/*.xcarchive
+    rm -rf ${BUILD_FOLDER}/${FRAMEWORK}.xcframework
+    rm -rf ${BUILD_FOLDER}/${FRAMEWORK}.xcframework.*
+}
+
+# build destination archivePath
+build() {
+    echo "Building scheme: $1, destination: $2, path: $3"
+    xcodebuild archive -project swift/${FRAMEWORK}.xcodeproj -scheme "$1" -destination "$2" -archivePath "$BUILD_FOLDER/$3".xcarchive SKIP_INSTALL=NO | xcpretty
+}
+
+build_ios_arm64() {
+    build "${FRAMEWORK}_iOS" "generic/platform=iOS" "ios-arm64"
+}
+
+build_ios_simulator() {
+    build "${FRAMEWORK}_iOS" "generic/platform=iOS Simulator" "ios-arm64_x86_64-simulator"
+}
+
+build_ios_mac_catalyst() {
+    build "${FRAMEWORK}_iOS" "platform=macOS,arch=x86_64,variant=Mac Catalyst" "ios-x86_64_arm64-maccatalyst"
+}
+
+build_mac_x64_arm64() {
+    build "${FRAMEWORK}_macOS" "generic/platform=macOS" "macos-arm64_x86_64"
+}
+
+create_xc_framework() {
+    echo "Createing xcframework..."
+    xcodebuild -create-xcframework -output $BUILD_FOLDER/$FRAMEWORK.xcframework \
+               -framework $BUILD_FOLDER/ios-arm64.xcarchive/Products/Library/Frameworks/$FRAMEWORK.framework \
+               -framework $BUILD_FOLDER/ios-arm64_x86_64-simulator.xcarchive/Products/Library/Frameworks/$FRAMEWORK.framework \
+               -framework $BUILD_FOLDER/macos-arm64_x86_64.xcarchive/Products/Library/Frameworks/$FRAMEWORK.framework
+}
+
+main() {
+    init
+    build_ios_arm64 && build_ios_simulator
+    build_mac_x64_arm64
+    create_xc_framework
+}
+
+main
