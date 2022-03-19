@@ -6,6 +6,9 @@ import 'package:insomnia_keeper_flutter/misc/assets.dart';
 import 'package:insomnia_keeper_flutter/misc/chart_filter.dart';
 import 'package:insomnia_keeper_flutter/misc/price.dart';
 import 'package:insomnia_keeper_flutter/widgets/asset_price_chart.dart';
+import 'package:insomnia_keeper_flutter/widgets/receive_screen.dart';
+import 'package:insomnia_keeper_flutter/widgets/send_screen.dart';
+import 'package:insomnia_keeper_flutter/widgets/trade_settings_screen.dart';
 
 import '../misc/format.dart';
 import '../misc/rem.dart';
@@ -132,9 +135,17 @@ class CoinScreen extends HookWidget{
               ),
               style: ElevatedButton.styleFrom(
                 minimumSize: Size(MediaQuery.of(context).size.width * 0.4, 50),
-                primary: percentChange > 0 ? Colors.redAccent : Colors.greenAccent
+                primary: percentChange > 0 ? Colors.red : Colors.green
               ),
-              onPressed: (){},
+              onPressed: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => TradeSettings(
+                    title: "Buy",
+                    coinname: title,
+                  )),
+                );
+              },
               label: const Text(
                 'Buy',
                 style: TextStyle(
@@ -146,21 +157,30 @@ class CoinScreen extends HookWidget{
             ),
             ElevatedButton.icon(
               icon: FaIcon(
-                FontAwesomeIcons.peopleArrows,
+                FontAwesomeIcons.cartArrowDown,
                 size: rem(5),
               ),
               style: ElevatedButton.styleFrom(
-                minimumSize: Size(MediaQuery.of(context).size.width * 0.4, 50),
+                  minimumSize: Size(MediaQuery.of(context).size.width * 0.4, 50),
+                  primary: percentChange < 0 ? Colors.red : Colors.green
               ),
-              onPressed: (){},
+              onPressed: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => TradeSettings(
+                    title: "Sell",
+                    coinname: title,
+                  )),
+                );
+              },
               label: const Text(
-                'Send',
+                'Sell',
                 style: TextStyle(
                     fontWeight: FontWeight.w300,
                     fontSize: 20
                 ),
               ),
-            )
+            ),
           ],
         ),
         SizedBox(height: MediaQuery.of(context).size.height * 0.05,),
@@ -169,16 +189,20 @@ class CoinScreen extends HookWidget{
           children: [
             ElevatedButton.icon(
               icon: FaIcon(
-                FontAwesomeIcons.cartArrowDown,
+                FontAwesomeIcons.peopleArrows,
                 size: rem(5),
               ),
               style: ElevatedButton.styleFrom(
                 minimumSize: Size(MediaQuery.of(context).size.width * 0.4, 50),
-                primary: percentChange < 0 ? Colors.redAccent : Colors.greenAccent
               ),
-              onPressed: (){},
+              onPressed: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Send(coinname: title, amountCoins: amountCoins,)),
+                );
+              },
               label: const Text(
-                'Sell',
+                'Send',
                 style: TextStyle(
                     fontWeight: FontWeight.w300,
                     fontSize: 20
@@ -193,7 +217,12 @@ class CoinScreen extends HookWidget{
               style: ElevatedButton.styleFrom(
                 minimumSize: Size(MediaQuery.of(context).size.width * 0.4, 50),
               ),
-              onPressed: (){},
+              onPressed: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Recieve(coinname: title,)),
+                );
+              },
               label: const Text(
                 'Receive',
                 style: TextStyle(

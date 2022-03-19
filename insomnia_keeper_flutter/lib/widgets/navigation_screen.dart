@@ -8,9 +8,12 @@ import 'package:insomnia_keeper_flutter/widgets/finger_screen.dart';
 import 'package:insomnia_keeper_flutter/widgets/lock_screen.dart';
 import 'package:insomnia_keeper_flutter/widgets/settings_screen.dart';
 import 'package:insomnia_keeper_flutter/widgets/exchange_screen.dart';
+import 'package:insomnia_keeper_flutter/widgets/signup_screen.dart';
 import 'package:insomnia_keeper_flutter/widgets/wallet_screen.dart';
+import 'package:insomnia_keeper_flutter/widgets/welcome_screen.dart';
 
 import '../misc/rem.dart';
+import 'login_screen.dart';
 
 
 class Page {
