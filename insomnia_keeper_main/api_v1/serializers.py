@@ -15,38 +15,27 @@ class GlobalSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(
-        required=True
-    )
     username = serializers.CharField()
     password = serializers.CharField(min_length=8, write_only=True)
 
     class Meta:
         model = User
         fields = (
-            'email',
             'username',
-            'password',
         )
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
+
     class Meta:
         model = Profile
-        fields = ['id', 'tag', 'access_status']
+        fields = ['id', 'access_status']
 
 
-class SignUpStep1Serializer(serializers.Serializer):
-    email = serializers.EmailField()
-    password = serializers.CharField()
-
-    def validate_password(self, value: str) -> str:
-        """Validate whether the password meets all django validator requirements."""
-        validate_password(value)
-        return value
-
-
-class ResetPasswordStep3Serializer(serializers.Serializer):
+class SignUpSerializer(serializers.Serializer):
+    username = serializers.EmailField()
     password = serializers.CharField()
 
     def validate_password(self, value: str) -> str:
@@ -68,16 +57,4 @@ class ErrorSerializer(serializers.ModelSerializer):
         model = Error
         fields = '__all__'
 
-
-def serialize_profile(
-    profile: Profile,
-    with_user: bool = False,
-):
-    user_data = None
-    if with_user:
-        user_data = UserSerializer(profile.user).data
-    return {
-        'profile': ProfileSerializer(profile).data,
-        'user': user_data,
-    }
 

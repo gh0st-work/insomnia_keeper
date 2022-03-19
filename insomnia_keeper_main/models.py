@@ -5,7 +5,7 @@ import re
 import uuid
 from decimal import Decimal
 from io import BytesIO
-from typing import Dict, Tuple
+from typing import Dict, Tuple, List
 
 from ckeditor.fields import RichTextField
 from django.conf import settings
@@ -29,48 +29,6 @@ except:
             return func(arguments)
 
         return func_wrapper
-
-
-def send_mail(subject, template, email, context_args):
-    # plaintext = get_template(f'emails/txt/{template}.txt')
-    htmly = get_template(f'emails/ru/{template}.html')
-    fixed = Global.objects.get(active=True)
-    admin_settings = AdminSettings.objects.get(active=True)
-    context = {'fixed': fixed, 'STATIC_URL': settings.STATIC_URL}
-    context.update(context_args)
-    # text_content = plaintext.render(context)
-    html_content = htmly.render(context)
-    if settings.LOCAL:
-        print(f'\n\n\n'
-              f'Key: {context["key"]}'
-              f'\n\n\n')
-    else:
-        # msg = EmailMultiAlternatives(subject, text_content, '{} <noreply@{}>'.format(fixed.site_name, fixed.base), [email])
-        # msg.attach_alternative(html_content, "text/html")
-        # msg.send()
-
-        message = Mail(
-            from_email=admin_settings.sendgrid_sender_email,
-            to_emails=email,
-            subject=subject,
-            html_content=html_content
-        )
-        done = False
-        retry = 3
-        while not done:
-            sg = SendGridAPIClient(admin_settings.sendgrid_api_key)
-            response = sg.send(message)
-            if response.status_code in range(200, 300):
-                done = True
-            else:
-                retry -= 1
-            if retry <= 0:
-                done = True
-                print(f'\n'
-                      f'Email не отправлен.'
-                      f'\n'
-                      f'Ответ: [{response.status_code}] {response.body}.'
-                      f'\n')
 
 
 def select_storage():
@@ -124,12 +82,20 @@ def verbose_choice(keyword, choices):
             return choice[1]
 
 
+def dict_to_choices(dict: Dict[str, str]) -> List[Tuple[str, str]]:
+    return [
+        (key, value)
+        for key, value in dict.items()
+    ]
+
+
+def choice_to_verbose(keyword, choices):
+    for choice in choices:
+        if choice[0] == keyword:
+            return choice[1]
+
+
 class AdminSettings(models.Model):
-    notification_mails = models.TextField('Email-ы для оповещений через Enter', blank=True, null=True)  # Some data
-    sendgrid_api_key = models.CharField('SendGrid API key',
-                                        default='',
-                                        max_length=1000)
-    sendgrid_sender_email = models.CharField('SendGrid Sender Email', default='', max_length=1000)
     fee_percent = models.DecimalField('Комиссия %', decimal_places=2, max_digits=5, default=1)
     active = models.BooleanField('Активно', default=True)
 
@@ -164,10 +130,14 @@ class Global(models.Model):
     facebook_username = models.CharField('Facebook username', help_text='https://facebook.com/<ваш username>/',
                                          max_length=50, blank=True, null=True)
     usd_rub_exchange_rate = models.DecimalField('1 USD -> x RUB курс', decimal_places=100, max_digits=200, default=120)
-    usd_eur_exchange_rate = models.DecimalField('1 USD -> x EUR курс', decimal_places=100, max_digits=200, default=Decimal(0.914))
-    btc_usd_exchange_rate = models.DecimalField('1 BTC -> x USD курс', decimal_places=100, max_digits=200, default=Decimal(38902))
-    eth_usd_exchange_rate = models.DecimalField('1 ETH -> x USD курс', decimal_places=100, max_digits=200, default=Decimal(2577))
-    ton_usd_exchange_rate = models.DecimalField('1 TON -> x USD курс', decimal_places=100, max_digits=200, default=Decimal(1.86))
+    usd_eur_exchange_rate = models.DecimalField('1 USD -> x EUR курс', decimal_places=100, max_digits=200,
+                                                default=Decimal(0.914))
+    btc_usd_exchange_rate = models.DecimalField('1 BTC -> x USD курс', decimal_places=100, max_digits=200,
+                                                default=Decimal(38902))
+    eth_usd_exchange_rate = models.DecimalField('1 ETH -> x USD курс', decimal_places=100, max_digits=200,
+                                                default=Decimal(2577))
+    ton_usd_exchange_rate = models.DecimalField('1 TON -> x USD курс', decimal_places=100, max_digits=200,
+                                                default=Decimal(1.86))
 
     active = models.BooleanField('Активно', default=True)
 
@@ -209,108 +179,211 @@ class Rules(models.Model):
 
 class Profile(models.Model):
     """ Профиль """
-    STATUS_CHOICES = [
-        ('activation', 'Отправленна ссылка активации'),
-        ('active', 'Активен'),
-    ]
     ACCESS_STATUS_CHOICES = [
         ('default', 'Обычный'),
         ('admin', 'Админ'),
     ]
-    user = models.OneToOneField(User, verbose_name='Пользователь', on_delete=models.CASCADE)
-    tag = models.CharField('Тег', max_length=150, unique=True)
+    user = models.ForeignKey(User, verbose_name='Пользователь', on_delete=models.CASCADE)
     created = models.DateTimeField('Дата создания', auto_now_add=True)
-    status = models.CharField('Статус', default='activation', max_length=10, choices=STATUS_CHOICES)
     access_status = models.CharField('Права', default='default', choices=ACCESS_STATUS_CHOICES, max_length=100)
 
     def __str__(self):
-        return f'{self.tag} ({self.user.email})'
+        return f'{self.user.username}'
 
     class Meta:
         verbose_name = 'Профиль'
         verbose_name_plural = 'Профили'
 
 
-def generate_key(
-        model,
-        field_name,
-        size: int = 6,
-) -> str:
-    allowed_chars = 'qwertyuiopasdfghjklzxcvbnm0123456789'
-    while True:
-        new_key = ''.join(random.choice(allowed_chars) for _ in range(size))
-        if not model.objects.filter(**{field_name: new_key}).count():
-            break
-    return new_key
+TRUST_WALLET_COINS = {
+    'btc': 'Bitcoin',
+    'ltc': 'Litecoin',
+    'doge': 'Dogecoin',
+    'dash': 'Dash',
+    'via': 'Viacoin',
+    'grs': 'Groestlcoin',
+    'dgb': 'DigiByte',
+    'mona': 'Monacoin',
+    'dcr': 'Decred',
+    'eth': 'Ethereum',
+    'etc': 'Ethereum Classic',
+    'icx': 'ICON',
+    'atom': 'Cosmos',
+    'zec': 'Zcash',
+    'firo': 'Firo',
+    'xrp': 'XRP',
+    'bch': 'Smart Bitcoin Cash',
+    'xlm': 'Stellar',
+    'btg': 'Bitcoin Gold',
+    'xno': 'Nano',
+    'rvn': 'Ravencoin',
+    'poa': 'POA Network',
+    'eos': 'EOS',
+    'trx': 'Tron',
+    'fio': 'FIO',
+    'nim': 'Nimiq',
+    'algo': 'Algorand',
+    'iotx': 'IoTeX',
+    'zil': 'Zilliqa',
+    'luna': 'Terra',
+    'dot': 'Polkadot',
+    'near': 'NEAR',
+    'aion': 'Aion',
+    'ksm': 'Kusama',
+    'ae': 'Aeternity',
+    'kava': 'Kava',
+    'fil': 'Filecoin',
+    'blz': 'Bluzelle',
+    'band': 'BandChain',
+    'theta': 'Theta',
+    'sol': 'Solana',
+    'egld': 'Elrond',
+    'bnb': 'Smart Chain',
+    'vet': 'VeChain',
+    'clo': 'Callisto',
+    'neo': 'NEO',
+    'tomo': 'TomoChain',
+    'tt': 'Thunder Token',
+    'one': 'Harmony',
+    'rose': 'Oasis',
+    'ont': 'Ontology',
+    'xtz': 'Tezos',
+    'ada': 'Cardano',
+    'kin': 'Kin',
+    'qtum': 'Qtum',
+    'nas': 'Nebulas',
+    'go': 'GoChain',
+    'nuls': 'NULS',
+    'flux': 'Zelcash',
+    'wan': 'Wanchain',
+    'waves': 'Waves',
+    'matic': 'Polygon',
+    'rune': 'THORChain',
+    'oeth': 'Optimism',
+    'areth': 'Arbitrum',
+    'ht': 'ECO Chain',
+    'avax': 'Avalanche C-Chain',
+    'xdai': 'xDai',
+    'ftm': 'Fantom',
+    'cro': 'Cronos Chain',
+    'celo': 'Celo',
+    'ron': 'Ronin',
+    'osmo': 'Osmosis',
+    'xec': 'ECash',
+}
+
+TRUST_WALLET_COINS_CHOICES = dict_to_choices(TRUST_WALLET_COINS)
+
+INDEPENDENT_COINS = {
+    'ton': 'Toncoin'
+}
+
+INDEPENDENT_COINS_CHOICES = dict_to_choices(INDEPENDENT_COINS)
+
+COINS = {**TRUST_WALLET_COINS, **INDEPENDENT_COINS}
+
+COINS_CHOICES = dict_to_choices(COINS)
 
 
-class EmailVerification(models.Model):
-    """ Ключи подтверждения email """
-    user = models.ForeignKey(User, verbose_name='Пользователь', on_delete=models.CASCADE)
-    new_email = models.EmailField('Новый e-mail', max_length=120)
-    key = models.CharField('Ключ подтверждения', max_length=500, null=True, blank=True)
-    created = models.DateTimeField('Дата создания', auto_now_add=True)
-
-    def save(self, *args, **kwargs):
-        if not self.key:
-            self.key = generate_key(EmailVerification, 'key')
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        return self.user.email
-
-    class Meta:
-        verbose_name = 'Ключ подверждения email'
-        verbose_name_plural = 'Ключи подверждения email'
-
-
-class ResetPasswordVerification(models.Model):
-    """ Ключи подтверждения сброса пароля """
-    user = models.ForeignKey(User, verbose_name='Пользователь', on_delete=models.CASCADE)
-    key = models.CharField('Ключ подтверждения', max_length=500, null=True, blank=True)
-    created = models.DateTimeField('Дата создания', auto_now_add=True)
-
-    def save(self, *args, **kwargs):
-        if not self.key:
-            self.key = generate_key(ResetPasswordVerification, 'key')
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        return self.user.email
-
-    class Meta:
-        verbose_name = 'Ключ подверждения сброса пароля'
-        verbose_name_plural = 'Ключи подверждения сброса пароля'
-
-
-CURRENCY_TYPES = [
-    ('btc', 'Bitcoin'),
-    ('eth', 'Etherium'),
-    ('ton', 'Toncoin'),
-]
-
-
-class Wallet(models.Model):
+class IndependentWallet(models.Model):
     owner = models.ForeignKey(Profile, verbose_name='Владелец', on_delete=models.PROTECT)
-    currency = models.CharField('Валюта', choices=CURRENCY_TYPES, max_length=10)
+    currency = models.CharField('Валюта', choices=INDEPENDENT_COINS_CHOICES, max_length=10)
     address = models.CharField('Адрес', max_length=1000)
     segwit_address = models.CharField('SegWit Адрес', max_length=1000, null=True, blank=True)
-    public_key = models.CharField('public key', max_length=10000, null=True, blank=True)
+    public_key = models.CharField('Public key', max_length=10000, null=True, blank=True)
     private_key = models.CharField('Private key', max_length=10000)
+
+
+class TrustWallet(models.Model):
+    owner = models.ForeignKey(Profile, verbose_name='Владелец', on_delete=models.PROTECT)
+    mnemonic = models.CharField('Mnemonic', max_length=10 ** 3)
+    btc_address = models.CharField('Bitcoin address', max_length=10 ** 3)
+    ltc_address = models.CharField('Litecoin address', max_length=10 ** 3)
+    doge_address = models.CharField('Dogecoin address', max_length=10 ** 3)
+    dash_address = models.CharField('Dash address', max_length=10 ** 3)
+    via_address = models.CharField('Viacoin address', max_length=10 ** 3)
+    grs_address = models.CharField('Groestlcoin address', max_length=10 ** 3)
+    dgb_address = models.CharField('DigiByte address', max_length=10 ** 3)
+    mona_address = models.CharField('Monacoin address', max_length=10 ** 3)
+    dcr_address = models.CharField('Decred address', max_length=10 ** 3)
+    eth_address = models.CharField('Ethereum address', max_length=10 ** 3)
+    etc_address = models.CharField('Ethereum Classic address', max_length=10 ** 3)
+    icx_address = models.CharField('ICON address', max_length=10 ** 3)
+    atom_address = models.CharField('Cosmos address', max_length=10 ** 3)
+    zec_address = models.CharField('Zcash address', max_length=10 ** 3)
+    firo_address = models.CharField('Firo address', max_length=10 ** 3)
+    xrp_address = models.CharField('XRP address', max_length=10 ** 3)
+    bch_address = models.CharField('Smart Bitcoin Cash address', max_length=10 ** 3)
+    xlm_address = models.CharField('Stellar address', max_length=10 ** 3)
+    btg_address = models.CharField('Bitcoin Gold address', max_length=10 ** 3)
+    xno_address = models.CharField('Nano address', max_length=10 ** 3)
+    rvn_address = models.CharField('Ravencoin address', max_length=10 ** 3)
+    poa_address = models.CharField('POA Network address', max_length=10 ** 3)
+    eos_address = models.CharField('EOS address', max_length=10 ** 3)
+    trx_address = models.CharField('Tron address', max_length=10 ** 3)
+    fio_address = models.CharField('FIO address', max_length=10 ** 3)
+    nim_address = models.CharField('Nimiq address', max_length=10 ** 3)
+    algo_address = models.CharField('Algorand address', max_length=10 ** 3)
+    iotx_address = models.CharField('IoTeX address', max_length=10 ** 3)
+    zil_address = models.CharField('Zilliqa address', max_length=10 ** 3)
+    luna_address = models.CharField('Terra address', max_length=10 ** 3)
+    dot_address = models.CharField('Polkadot address', max_length=10 ** 3)
+    near_address = models.CharField('NEAR address', max_length=10 ** 3)
+    aion_address = models.CharField('Aion address', max_length=10 ** 3)
+    ksm_address = models.CharField('Kusama address', max_length=10 ** 3)
+    ae_address = models.CharField('Aeternity address', max_length=10 ** 3)
+    kava_address = models.CharField('Kava address', max_length=10 ** 3)
+    fil_address = models.CharField('Filecoin address', max_length=10 ** 3)
+    blz_address = models.CharField('Bluzelle address', max_length=10 ** 3)
+    band_address = models.CharField('BandChain address', max_length=10 ** 3)
+    theta_address = models.CharField('Theta address', max_length=10 ** 3)
+    sol_address = models.CharField('Solana address', max_length=10 ** 3)
+    egld_address = models.CharField('Elrond address', max_length=10 ** 3)
+    bnb_address = models.CharField('Smart Chain address', max_length=10 ** 3)
+    vet_address = models.CharField('VeChain address', max_length=10 ** 3)
+    clo_address = models.CharField('Callisto address', max_length=10 ** 3)
+    neo_address = models.CharField('NEO address', max_length=10 ** 3)
+    tomo_address = models.CharField('TomoChain address', max_length=10 ** 3)
+    tt_address = models.CharField('Thunder Token address', max_length=10 ** 3)
+    one_address = models.CharField('Harmony address', max_length=10 ** 3)
+    rose_address = models.CharField('Oasis address', max_length=10 ** 3)
+    ont_address = models.CharField('Ontology address', max_length=10 ** 3)
+    xtz_address = models.CharField('Tezos address', max_length=10 ** 3)
+    ada_address = models.CharField('Cardano address', max_length=10 ** 3)
+    kin_address = models.CharField('Kin address', max_length=10 ** 3)
+    qtum_address = models.CharField('Qtum address', max_length=10 ** 3)
+    nas_address = models.CharField('Nebulas address', max_length=10 ** 3)
+    go_address = models.CharField('GoChain address', max_length=10 ** 3)
+    nuls_address = models.CharField('NULS address', max_length=10 ** 3)
+    flux_address = models.CharField('Zelcash address', max_length=10 ** 3)
+    wan_address = models.CharField('Wanchain address', max_length=10 ** 3)
+    waves_address = models.CharField('Waves address', max_length=10 ** 3)
+    matic_address = models.CharField('Polygon address', max_length=10 ** 3)
+    rune_address = models.CharField('THORChain address', max_length=10 ** 3)
+    oeth_address = models.CharField('Optimism address', max_length=10 ** 3)
+    areth_address = models.CharField('Arbitrum address', max_length=10 ** 3)
+    ht_address = models.CharField('ECO Chain address', max_length=10 ** 3)
+    avax_address = models.CharField('Avalanche C-Chain address', max_length=10 ** 3)
+    xdai_address = models.CharField('xDai address', max_length=10 ** 3)
+    ftm_address = models.CharField('Fantom address', max_length=10 ** 3)
+    cro_address = models.CharField('Cronos Chain address', max_length=10 ** 3)
+    celo_address = models.CharField('Celo address', max_length=10 ** 3)
+    ron_address = models.CharField('Ronin address', max_length=10 ** 3)
+    osmo_address = models.CharField('Osmosis address', max_length=10 ** 3)
+    xec_address = models.CharField('ECash address', max_length=10 ** 3)
 
 
 class Keeper(models.Model):
     owner = models.ForeignKey(Profile, verbose_name='Владелец', on_delete=models.PROTECT)
-    btc_wallet = models.ForeignKey(Wallet, verbose_name='Bitcoin адрес', null=True, blank=True, on_delete=models.PROTECT, related_name='keeper_btc_wallet')
-    eth_wallet = models.ForeignKey(Wallet, verbose_name='Etherium адрес', null=True, blank=True, on_delete=models.PROTECT, related_name='keeper_etc_wallet')
-    ton_wallet = models.ForeignKey(Wallet, verbose_name='Toncoin адрес', null=True, blank=True, on_delete=models.PROTECT, related_name='keeper_ton_wallet')
+    ton_wallet = models.ForeignKey(IndependentWallet, verbose_name='Toncoin Independent Wallet', on_delete=models.PROTECT, related_name='keeper_ton_independent_wallet')
+    trust_wallet = models.ForeignKey(TrustWallet, verbose_name='Trust Wallet', on_delete=models.PROTECT, related_name='keeper_trust_wallet')
 
     def __str__(self):
-        return f'{self.owner.tag} ({self.owner.user.email})'
+        return f'{self.owner.user.username}'
 
 
 class Transaction(models.Model):
-    currency = models.CharField('Валюта', choices=CURRENCY_TYPES, max_length=10)
+    currency = models.CharField('Валюта', choices=COINS_CHOICES, max_length=10)
     amount = models.DecimalField('Количество', max_digits=200, decimal_places=100, default=0)
     from_keeper = models.ForeignKey(Keeper, verbose_name='Кипер отправителя', on_delete=models.PROTECT, related_name='transaction_from_keeper')
     to_address = models.CharField('Адрес получателя', null=True, blank=True, max_length=1000)

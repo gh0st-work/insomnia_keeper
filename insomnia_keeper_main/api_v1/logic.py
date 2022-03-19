@@ -11,7 +11,10 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 import redis
 from .serializers import *
-import tonweb.management as ton
+import walletcore as trust_core
+
+
+# import tonweb.management as ton
 
 
 def extract_request_data(request):
@@ -70,80 +73,6 @@ def check_auth(access_status=None):
     return real_decorator
 
 
-def send_auth_mail(
-        template: str,
-        user: User,
-        email: str,
-) -> None:
-    """ Отправить email с ключем """
-
-    def signup_func() -> Tuple[str, EmailVerification]:
-        subject = 'Регистрация'
-        EmailVerification.objects.filter(user=user).delete()
-        key_model = EmailVerification.objects.create(user=user, new_email=email)
-        return subject, key_model
-
-    def reset_password_func() -> Tuple[str, ResetPasswordVerification]:
-        subject = 'Сброс пароля'
-        ResetPasswordVerification.objects.filter(user=user).delete()
-        key_model = ResetPasswordVerification.objects.create(user=user)
-        return subject, key_model
-
-    def change_email_func() -> Tuple[str, ResetPasswordVerification]:
-        subject = 'Смена email'
-        EmailVerification.objects.filter(user=user).delete()
-        key_model = EmailVerification.objects.create(user=user, new_email=email)
-        return subject, key_model
-
-    template_to_func = {
-        'signup': signup_func,
-        'reset-password': reset_password_func,
-        'change-email': change_email_func,
-    }
-
-    subject, key_model = template_to_func[template]()
-    data = {
-        'key': key_model.key,
-        'created': key_model.created,
-    }
-    if settings.LOCAL:
-        print(key_model.key)
-    else:
-        send_mail(subject, template, email, data)
-
-
-def key_verification(
-        email: str,
-        key: str
-) -> Tuple[int, Dict]:
-    """ Сверка ключа """
-    if User.objects.filter(email=email):
-        user = User.objects.get(email=email)
-        if EmailVerification.objects.filter(user=user):
-            key_model = EmailVerification.objects.get(user=user)
-            new = key_model.new_email
-            if str(key) == str(key_model.key):
-                return status.HTTP_200_OK, {
-                    'success': True,
-                    'data': {
-                        'key': key,
-                        'new': new
-                    }
-                }
-        if ResetPasswordVerification.objects.filter(user=user):
-            key_model = ResetPasswordVerification.objects.get(user=user)
-            if str(key) == str(key_model.key):
-                return status.HTTP_200_OK, {
-                    'success': True,
-                    'data': {
-                        'key': key
-                    }
-                }
-    return status.HTTP_401_UNAUTHORIZED, {
-        'success': False
-    }
-
-
 def get_global():
     if Global.objects.filter(active=True) and Rules.objects.filter(active=True):
 
@@ -183,227 +112,205 @@ def log_out(profile, data):
         }, status=status.HTTP_400_BAD_REQUEST)
 
 
-@check_auth('default')
-def get_profile(profile, data):
-    return Response({
-        'success': True,
-        'profile': serialize_profile(
-            profile,
-            True,
-        ),
-    }, status=status.HTTP_200_OK)
+def generate_trust_wallet_passphrase(profile: Profile):
+    return f'{profile.tag}-{settings.SECRET_KEY}'
 
 
-@check_auth('default')
-def get_profile_data(owner_profile, data):
-    try:
-        profile = Profile.objects.get(id=data['id'], status='active')
-    except:
-        return Response({
-            'success': False,
-        }, status=status.HTTP_400_BAD_REQUEST)
+COIN_TO_TRUST = {
+    'btc': trust_core.CoinType.Bitcoin,
+    'ltc': trust_core.CoinType.Litecoin,
+    'doge': trust_core.CoinType.Dogecoin,
+    'dash': trust_core.CoinType.Dash,
+    'via': trust_core.CoinType.Viacoin,
+    'grs': trust_core.CoinType.Groestlcoin,
+    'dgb': trust_core.CoinType.DigiByte,
+    'mona': trust_core.CoinType.Monacoin,
+    'dcr': trust_core.CoinType.Decred,
+    'eth': trust_core.CoinType.Ethereum,
+    'etc': trust_core.CoinType.EthereumClassic,
+    'icx': trust_core.CoinType.ICON,
+    'atom': trust_core.CoinType.Cosmos,
+    'zec': trust_core.CoinType.Zcash,
+    'firo': trust_core.CoinType.Firo,
+    'xrp': trust_core.CoinType.XRP,
+    'bch': trust_core.CoinType.SmartBitcoinCash,
+    'xlm': trust_core.CoinType.Stellar,
+    'btg': trust_core.CoinType.BitcoinGold,
+    'xno': trust_core.CoinType.Nano,
+    'rvn': trust_core.CoinType.Ravencoin,
+    'poa': trust_core.CoinType.POANetwork,
+    'eos': trust_core.CoinType.EOS,
+    'trx': trust_core.CoinType.Tron,
+    'fio': trust_core.CoinType.FIO,
+    'nim': trust_core.CoinType.Nimiq,
+    'algo': trust_core.CoinType.Algorand,
+    'iotx': trust_core.CoinType.IoTeX,
+    'zil': trust_core.CoinType.Zilliqa,
+    'luna': trust_core.CoinType.Terra,
+    'dot': trust_core.CoinType.Polkadot,
+    'near': trust_core.CoinType.NEAR,
+    'aion': trust_core.CoinType.Aion,
+    'ksm': trust_core.CoinType.Kusama,
+    'ae': trust_core.CoinType.Aeternity,
+    'kava': trust_core.CoinType.Kava,
+    'fil': trust_core.CoinType.Filecoin,
+    'blz': trust_core.CoinType.Bluzelle,
+    'band': trust_core.CoinType.BandChain,
+    'theta': trust_core.CoinType.Theta,
+    'sol': trust_core.CoinType.Solana,
+    'egld': trust_core.CoinType.Elrond,
+    'bnb': trust_core.CoinType.SmartChain,
+    'vet': trust_core.CoinType.VeChain,
+    'clo': trust_core.CoinType.Callisto,
+    'neo': trust_core.CoinType.NEO,
+    'tomo': trust_core.CoinType.TomoChain,
+    'tt': trust_core.CoinType.ThunderToken,
+    'one': trust_core.CoinType.Harmony,
+    'rose': trust_core.CoinType.Oasis,
+    'ont': trust_core.CoinType.Ontology,
+    'xtz': trust_core.CoinType.Tezos,
+    'ada': trust_core.CoinType.Cardano,
+    'kin': trust_core.CoinType.Kin,
+    'qtum': trust_core.CoinType.Qtum,
+    'nas': trust_core.CoinType.Nebulas,
+    'go': trust_core.CoinType.GoChain,
+    'nuls': trust_core.CoinType.NULS,
+    'flux': trust_core.CoinType.Zelcash,
+    'wan': trust_core.CoinType.Wanchain,
+    'waves': trust_core.CoinType.Waves,
+    'matic': trust_core.CoinType.Polygon,
+    'rune': trust_core.CoinType.THORChain,
+    'oeth': trust_core.CoinType.Optimism,
+    'areth': trust_core.CoinType.Arbitrum,
+    'ht': trust_core.CoinType.ECOChain,
+    'avax': trust_core.CoinType.AvalancheCChain,
+    'xdai': trust_core.CoinType.XDai,
+    'ftm': trust_core.CoinType.Fantom,
+    'cro': trust_core.CoinType.CronosChain,
+    'celo': trust_core.CoinType.Celo,
+    'ron': trust_core.CoinType.Ronin,
+    'osmo': trust_core.CoinType.Osmosis,
+    'xec': trust_core.CoinType.ECash,
+}
 
-    return Response({
-        'success': True,
-        'profile': serialize_profile(
-            profile,
-            (owner_profile.access_status == 'admin') or (profile == owner_profile),
-        ),
-    }, status=status.HTTP_200_OK)
+
+def create_trust_wallet(profile: Profile) -> TrustWallet:
+    wallet = trust_core.HDWallet.create(128, generate_trust_wallet_passphrase(profile))
+    mnemonic = wallet.mnemonic
+    trust_wallet = TrustWallet.objects.create(
+        owner=profile,
+        mnemonic=mnemonic,
+        **{
+            f'{symbol}_address': COIN_TO_TRUST[symbol]
+            for symbol in TRUST_WALLET_COINS.keys()
+        }
+    )
+    return trust_wallet
 
 
-def create_wallet(profile: Profile, currency: str):
-    existing_same_wallets = Wallet.objects.filter(profile=profile, currency=currency)
-    if not len(existing_same_wallets):
-        if currency == 'btc':
-            key = bit.Key()
-            wallet = Wallet.objects.create(
-                owner=profile,
-                currency=currency,
-                address=key.address,
-                segwit_address=key.segwit_address,
-                private_key=key.to_hex(),
-            )
-            return wallet
-        elif currency == 'eth':
-            acc = eth_account.Account.create()
-            wallet = Wallet.objects.create(
-                owner=profile,
-                currency=currency,
-                address=acc.address,
-                private_key=acc.key,
-            )
-            return wallet
-        elif currency == 'ton':
-            acc = ton.create_wallet()
-            wallet = Wallet.objects.create(
-                owner=profile,
-                currency=currency,
-                address=acc['address'],
-                public_key=acc['public_key'],
-                private_key=acc['private_key']
-            )
-            return wallet
+def create_independent_wallet(profile: Profile, currency: str) -> IndependentWallet:
+    if currency == 'ton':
+        acc = ton.create_wallet()
+        wallet = IndependentWallet.objects.create(
+            owner=profile,
+            currency=currency,
+            address=acc['address'],
+            public_key=acc['public_key'],
+            private_key=acc['private_key']
+        )
+        return wallet
+    else:
+        raise Exception('No such currency')
 
 
 def create_keeper(profile: Profile) -> Keeper:
-    wallet_btc = create_wallet(profile, 'btc')
-    wallet_eth = create_wallet(profile, 'eth')
-    wallet_ton = create_wallet(profile, 'ton')
+    trust_wallet = create_trust_wallet(profile)
+    ton_wallet = create_independent_wallet(profile, 'ton')
     keeper = Keeper.objects.create(
         owner=profile,
-        wallet_btc=wallet_btc,
-        wallet_eth=wallet_eth,
-        wallet_ton=wallet_ton,
+        trust_wallet=trust_wallet,
+        ton_wallet=ton_wallet,
     )
     return keeper
 
 
 @check_auth()
-def create_profile(profile, data):
-    step = -1
+def check_tag_available(profile, data):
     try:
-        step = int(data['step'])
-    except:
-        pass
-
-    try:
-        email = data['email']
+        tag = data['tag']
     except:
         return Response({
             'success': False,
-            'errors': ['Email не введен']
+            'errors': ['Тег не введен']
         }, status=status.HTTP_400_BAD_REQUEST)
 
-    if step in [1, 2]:
-        if step == 1:
-            if User.objects.filter(email=email, is_active=True):
-                return Response({
-                    'success': False,
-                    'errors': ['Пользователь с данным email уже существует. Попробуйте вход.']
-                }, status=status.HTTP_400_BAD_REQUEST)
-            elif User.objects.filter(email=email, is_active=False):
-                user = User.objects.get(email=email, is_active=False)
-            else:
-                serializer = SignUpStep1Serializer(data=data)
-                if serializer.is_valid():
-                    valid_data = serializer.validated_data
-                    email, password = valid_data['email'], valid_data['password']
-                    user = User.objects.create_user(username=email, email=email, password=password)
-                else:
-                    return Response({
-                        'success': False,
-                        'errors': serialize_errors(serializer.errors)
-                    }, status=status.HTTP_400_BAD_REQUEST)
-            user.is_active = False
-            user.save()
-            send_auth_mail('signup', user, email)
+    if len(tag) <= 3:
+        return Response({
+            'success': False,
+            'data': [{'tag': 'Тег должен быть длиннее 3х символов'}]
+        }, status=status.HTTP_406_NOT_ACCEPTABLE)
+    else:
+        if Profile.objects.filter(user__username=tag):
             return Response({
                 'success': True,
-                'data': {
-                    'email': user.email,
-                }
-            }, status=status.HTTP_201_CREATED)
-        elif step == 2:
-            try:
-                email = data['email']
-                key = data['key']
-                verify_status, result = key_verification(
-                    email,
-                    key
-                )
-                if verify_status == status.HTTP_200_OK:
-                    user = User.objects.get(email=email)
-                    if Profile.objects.filter(user=user):
-                        profile = Profile.objects.get(user=user)
-                    else:
-                        profile = Profile.objects.create(user=user)
-
-                    # Some safety stuff
-                    if EmailVerification.objects.filter(user=user, key=key):
-                        user.email = EmailVerification.objects.get(user=user, key=key).new_email
-                        user.is_active = True
-                        user.save()
-                        EmailVerification.objects.filter(user=user).delete()
-                        profile.status = 'active'
-                        profile.save()
-                        create_keeper(profile)
-                        return Response({
-                            'success': True,
-                        }, status=status.HTTP_200_OK)
-                return Response(result, status=verify_status)
-            except:
-                pass
-    return Response({
-        'success': False,
-        'errors': ['Неверный запрос']
-    }, status=status.HTTP_400_BAD_REQUEST)
+                'data': {'tag': tag}
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response({
+                'success': False,
+                'data': [{'tag': 'Пользователь с таким тегом уже существует'}]
+            }, status=status.HTTP_406_NOT_ACCEPTABLE)
 
 
 @check_auth()
-def reset_password(profile, data):
-    step = -1
+def create_profile(profile, data):
     try:
-        step = int(data['step'])
+        tag = data['tag']
     except:
-        pass
-    if step in [1, 2, 3]:
-        if step == 1:
+        return Response({
+            'success': False,
+            'errors': ['Тег не введен']
+        }, status=status.HTTP_400_BAD_REQUEST)
 
-            try:
-                email = data['email']
-                user = False
-                if User.objects.filter(email=email, is_active=True):
-                    user = User.objects.get(email=email, is_active=True)
-                if user:
-                    send_auth_mail('reset-password', user, user.email)
+    if len(tag) > 3:
+        data['username'] = tag
+        if not Profile.objects.filter(user__username=tag):
+            serializer = SignUpSerializer(data=data)
+            if serializer.is_valid():
+                if len(serializer.validated_data.password) >= 16:
+                    user = User.objects.create_user(
+                        username=serializer.validated_data.username,
+                        password=serializer.validated_data.password
+                    )
+                    user.is_active = True
+                    user.save()
+                    profile = Profile.objects.create(user=user)
+                    profile.save()
+                    create_keeper(profile)
                     return Response({
                         'success': True,
+                        'data': ProfileSerializer(profile).data
                     }, status=status.HTTP_200_OK)
-            except BaseException as ex:
-                pass
-
-        elif step == 2:
-
-            try:
-                email = data['email']
-                key = data['key']
-                verify_status, result = key_verification(
-                    email,
-                    key
-                )
-                return Response(result, status=verify_status)
-            except:
-                pass
-
-        elif step == 3:
-            try:
-                email = data['email']
-                key = data['key']
-                verify_status, result = key_verification(
-                    email,
-                    key
-                )
-                if User.objects.filter(email=email) and verify_status == status.HTTP_200_OK:
-                    user = User.objects.get(email=email)
-                    serializer = ResetPasswordStep3Serializer(data=data)
-                    if serializer.is_valid():
-                        user.set_password(serializer.validated_data['password'])
-                        user.save()
-                        return Response({
-                            'success': True,
-                        }, status=status.HTTP_200_OK)
-                    else:
-                        return Response({
-                            'success': False,
-                            'errors': serialize_errors(serializer.errors),
-                        }, status=status.HTTP_400_BAD_REQUEST)
-            except:
-                pass
-    return Response({
-        'success': False,
-        'errors': ['Неверный запрос']
-    }, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    return Response({
+                        'success': False,
+                        'errors': [{'password': 'Введите как минимум 16 символов'}]
+                    }, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({
+                    'success': False,
+                    'errors': serialize_errors(serializer.errors)
+                }, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({
+                'success': False,
+                'errors': [{'tag': 'Пользователь с таким тегом уже существует'}]
+            }, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response({
+            'success': False,
+            'data': [{'tag': 'Тег должен быть длиннее 3х символов'}]
+        }, status=status.HTTP_400_BAD_REQUEST)
 
 
 @check_auth('default')

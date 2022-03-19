@@ -47,19 +47,6 @@ class ProfileCreateView(APIView):
         return create_profile(request)
 
 
-class ProfileResetPasswordView(APIView):
-    permission_classes = (permissions.AllowAny,)
-
-    def post(self, request):
-        return reset_password(request)
-
-
-class ProfileDataView(APIView):
-
-    def get(self, request):
-        return get_profile_data(request)
-
-
 class PersonalAccountView(APIView):
 
     def get(self, request):

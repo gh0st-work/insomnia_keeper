@@ -26,8 +26,6 @@ register_models({
     AdminSettings: [],
     Global: [],
     Profile: ['user', 'tag', 'access_status', 'status', 'created'],
-    EmailVerification: ['user', 'new_email', 'key', 'created'],
-    ResetPasswordVerification: ['user', 'key', 'created'],
     Keeper: ['owner', 'btc_wallet_address', 'eth_wallet_address', 'ton_wallet_address'],
     Transaction: ['currency', 'amount', 'from_keeper', 'to_keeper', 'to_address', 'created'],
     Error: ['pathname', 'os_name', 'browser_name', 'created'],

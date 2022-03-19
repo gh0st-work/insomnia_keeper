@@ -12,9 +12,7 @@ api_v1_auth_urlpatterns = [
 ]
 
 api_v1_profile_urlpatterns = [
-    path('v1/profile-data/', views_v1.ProfileDataView.as_view(), name='v1-profile-data'),
     path('v1/profile/create/', views_v1.ProfileCreateView.as_view(), name='v1-profile-create'),
-    path('v1/profile/reset-password/', views_v1.ProfileResetPasswordView.as_view(), name='v1-profile-reset-password'),
     path('v1/profile/', views_v1.ProfileView.as_view(), name='v1-profile'),
 ]
 
