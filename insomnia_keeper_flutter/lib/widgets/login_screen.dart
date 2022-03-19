@@ -5,8 +5,10 @@ import 'package:insomnia_keeper_flutter/widgets/signup_screen.dart';
 import '../misc/already_have_an_account_acheck.dart';
 
 class LoginScreen extends HookWidget{
+
   @override
   Widget build(BuildContext context) {
+    final _isVisible = useState(false);
     final theme = Theme.of(context);
     return Container(
       width: double.infinity,
@@ -44,11 +46,16 @@ class LoginScreen extends HookWidget{
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
             width: MediaQuery.of(context).size.width * 0.8,
             child: TextField(
-              obscureText: true,
+              obscureText: _isVisible.value,
               decoration: InputDecoration(
                   icon: Icon(Icons.lock),
                   hintText: "Enter your password",
-                  suffixIcon: Icon(Icons.visibility)
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      _isVisible.value = !_isVisible.value;
+                    },
+                    icon: _isVisible.value ? Icon(Icons.visibility) : Icon(Icons.visibility_off),
+                  )
               ),
             ),
           ),

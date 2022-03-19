@@ -5,9 +5,20 @@ import '../misc/already_have_an_account_acheck.dart';
 import 'login_screen.dart';
 
 class SignupScreen extends HookWidget{
+
   @override
   Widget build(BuildContext context) {
+    final _isVisible = useState(false);
+    final _isPasswordCharacters = useState(false);
     final theme = Theme.of(context);
+
+    onPasswordChange(String password){
+      _isPasswordCharacters.value = false;
+      if(password.length >= 16){
+        _isPasswordCharacters.value = true;
+      }
+    }
+
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -16,6 +27,7 @@ class SignupScreen extends HookWidget{
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const Text(
             "SIGNUP",
@@ -33,6 +45,7 @@ class SignupScreen extends HookWidget{
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
             width: MediaQuery.of(context).size.width * 0.8,
             child: TextField(
+              onChanged: (String value){},
               decoration: InputDecoration(
                   icon: Icon(Icons.person),
                   hintText: "Enter your tag"
@@ -44,21 +57,52 @@ class SignupScreen extends HookWidget{
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
             width: MediaQuery.of(context).size.width * 0.8,
             child: TextField(
-              obscureText: true,
+              onChanged: (password) => onPasswordChange(password),
+              obscureText: !_isVisible.value,
               decoration: InputDecoration(
                   icon: Icon(Icons.lock),
                   hintText: "Enter your password",
-                  suffixIcon: Icon(Icons.visibility)
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      _isVisible.value = !_isVisible.value;
+                    },
+                    icon: _isVisible.value ? Icon(Icons.visibility) : Icon(Icons.visibility_off),
+                  )
               ),
             ),
           ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AnimatedContainer(
+                duration: Duration(milliseconds: 500),
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration(
+                    color: _isPasswordCharacters.value ? Colors.green : Colors.transparent,
+                    border: _isPasswordCharacters.value ? Border.all(color: Colors.transparent) : Border.all(color: Colors.white),
+                    borderRadius: BorderRadius.circular(50)
+                ),
+                child: Center(
+                  child: Icon(
+                    Icons.check,
+                    color: Colors.white,
+                    size: _isPasswordCharacters.value ? 15 : 0,
+                  ),
+                ),
+              ),
+              SizedBox(width: 10,),
+              Text("Contains at least 16 characters")
+            ],
+          ),
+          SizedBox(height: 20,),
           Container(
             margin: EdgeInsets.symmetric(vertical: 10),
             child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   minimumSize: Size(MediaQuery.of(context).size.width * 0.7, 50),
                 ),
-                onPressed: (){},
+                onPressed: _isPasswordCharacters.value ? (){} : null,
                 child: const Text(
                   "SIGNUP",
                   style: TextStyle(
