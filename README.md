@@ -36,7 +36,9 @@ Frontend TODO:
 - `pip install -r requirements.txt`
 - `cd wallet-core-python`
 - `python setup.py install --prefix=~/.local`
+
 or 
+
 - install wallet-core-python [wallet core py](https://github.com/phuang/wallet-core-python) and run codegen/generator.py
 - `python manage.py makemigrations`
 - `python manage.py migrate`
