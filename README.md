@@ -10,6 +10,7 @@ Backend TODO:
 - [x] Project set up
 - [x] Users
 - [x] Exchange rates
+- [x] Trust Wallet core 
 - [ ] Crypto management
 - [ ] Market
 - [ ] Payments
@@ -33,6 +34,10 @@ Frontend TODO:
 ### Backend
 - `python -m venv venv`
 - `pip install -r requirements.txt`
+- `cd wallet-core-python`
+- `python setup.py install --prefix=~/.local`
+or 
+- install wallet-core-python [wallet core py](https://github.com/phuang/wallet-core-python) and run codegen/generator.py
 - `python manage.py makemigrations`
 - `python manage.py migrate`
 - `python manage.py createsuperuser`
