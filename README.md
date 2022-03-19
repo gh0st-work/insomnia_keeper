@@ -36,7 +36,6 @@ Frontend TODO:
 - `pip install -r requirements.txt`
 - `cd wallet-core-python`
 - install wallet-core-python with `cd wallet-core-python` `python setup.py install --prefix=~/.local` or from repo [wallet core py](https://github.com/phuang/wallet-core-python) and run codegen/generator.py
-- install wallet-core-python 
 - `python manage.py makemigrations`
 - `python manage.py migrate`
 - `python manage.py createsuperuser`
