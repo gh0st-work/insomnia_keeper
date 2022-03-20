@@ -11,29 +11,13 @@ class Send extends HookWidget{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Send ${coinname}",
-          style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.w300
-          ),
-        ),
-        centerTitle: true,
-      ),
       body: Container(
+        height: MediaQuery.of(context).size.height * 0.5,
         width: double.infinity,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              "${coinname} amount ${amountCoins}",
-              style: TextStyle(
-                fontSize: rem(8),
-                fontWeight: FontWeight.w300
-              ),
-            ),
             SizedBox(height: 30,),
             Container(
               margin: EdgeInsets.symmetric(vertical: 10),

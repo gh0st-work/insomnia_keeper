@@ -2,8 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:insomnia_keeper_flutter/widgets/transfer_screen.dart';
 
 import '../misc/rem.dart';
+import 'history_screen.dart';
 
 class AddDrawer extends HookWidget{
 
@@ -57,16 +59,15 @@ class AddDrawer extends HookWidget{
     "EUR"
   ];
 
-  Widget _buildPopup() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      child: Text(
-        "Select currency",
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w300
-        ),
-      ),
+  Widget _buildMenuItem(BuildContext context, String text, IconData icon, Widget? route) {
+    return ListTile(
+      title: Text(text),
+      leading: FaIcon(icon),
+      onTap: route == null ? (){} : (){
+        Navigator.of(context).pop();
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (BuildContext context) => route));
+      },
     );
 }
 
@@ -79,7 +80,7 @@ class AddDrawer extends HookWidget{
           _buildDrawerHeader(),
           Divider(),
           PopupMenuButton<String>(
-            child: _buildPopup(),
+            child: _buildMenuItem(context, "Select currency", FontAwesomeIcons.coins, null),
             initialValue: currency[0],
             offset: Offset(50, 50),
             onSelected: choiceAction,
@@ -91,7 +92,13 @@ class AddDrawer extends HookWidget{
                 );
               }).toList();
             },
-          )
+          ),
+          _buildMenuItem(
+              context,
+              "History",
+              FontAwesomeIcons.clockRotateLeft,
+              History()),
+          _buildMenuItem(context, "Transfer", FontAwesomeIcons.moneyBillTransfer, Transfer())
         ],
       ),
     );

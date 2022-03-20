@@ -6,9 +6,10 @@ import 'package:insomnia_keeper_flutter/misc/assets.dart';
 import 'package:insomnia_keeper_flutter/misc/chart_filter.dart';
 import 'package:insomnia_keeper_flutter/misc/price.dart';
 import 'package:insomnia_keeper_flutter/widgets/asset_price_chart.dart';
+import 'package:insomnia_keeper_flutter/widgets/buy_settings.dart';
 import 'package:insomnia_keeper_flutter/widgets/receive_screen.dart';
+import 'package:insomnia_keeper_flutter/widgets/sell_settings.dart';
 import 'package:insomnia_keeper_flutter/widgets/send_screen.dart';
-import 'package:insomnia_keeper_flutter/widgets/trade_settings_screen.dart';
 
 import '../misc/format.dart';
 import '../misc/rem.dart';
@@ -138,12 +139,13 @@ class CoinScreen extends HookWidget{
                 primary: percentChange > 0 ? Colors.red : Colors.green
               ),
               onPressed: (){
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => TradeSettings(
-                    title: "Buy",
-                    coinname: title,
-                  )),
+                showModalBottomSheet<void>(
+                    context: context,
+                    builder: (BuildContext context){
+                      return BuySettings(
+                        coinname: title,
+                      );
+                    }
                 );
               },
               label: const Text(
@@ -165,13 +167,15 @@ class CoinScreen extends HookWidget{
                   primary: percentChange < 0 ? Colors.red : Colors.green
               ),
               onPressed: (){
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => TradeSettings(
-                    title: "Sell",
-                    coinname: title,
-                  )),
-                );
+                showModalBottomSheet<void>(
+                    context: context,
+                    builder: (BuildContext context){
+                      return SellSettings(
+                        coinname: title,
+                        coinsAmount: amountCoins,
+                      );
+                    }
+                  );
               },
               label: const Text(
                 'Sell',
@@ -196,9 +200,11 @@ class CoinScreen extends HookWidget{
                 minimumSize: Size(MediaQuery.of(context).size.width * 0.4, 50),
               ),
               onPressed: (){
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Send(coinname: title, amountCoins: amountCoins,)),
+                showModalBottomSheet<void>(
+                    context: context,
+                    builder: (BuildContext context){
+                      return Send(coinname: title, amountCoins: amountCoins,);
+                    }
                 );
               },
               label: const Text(
@@ -218,9 +224,11 @@ class CoinScreen extends HookWidget{
                 minimumSize: Size(MediaQuery.of(context).size.width * 0.4, 50),
               ),
               onPressed: (){
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Recieve(coinname: title,)),
+                showModalBottomSheet<void>(
+                    context: context,
+                  builder: (BuildContext context){
+                      return Recieve(coinname: title,);
+                  }
                 );
               },
               label: const Text(
