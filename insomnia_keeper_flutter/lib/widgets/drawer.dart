@@ -4,10 +4,17 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:insomnia_keeper_flutter/widgets/transfer_screen.dart';
 
+
 import '../misc/rem.dart';
 import 'history_screen.dart';
 
 class AddDrawer extends HookWidget{
+
+  final _isSwitched = useState(false);
+
+  void _changeTheme(bool value){
+
+  }
 
   Widget _buildDrawerHeader(){
     return DrawerHeader(
@@ -36,16 +43,6 @@ class AddDrawer extends HookWidget{
               ]
           ),
         )
-    );
-  }
-
-  Widget buildMenuItem({
-    required String text,
-    required IconData icon
-    }){
-    return ListTile(
-      leading: FaIcon(icon),
-      title: Text(text),
     );
   }
 
@@ -98,7 +95,28 @@ class AddDrawer extends HookWidget{
               "History",
               FontAwesomeIcons.clockRotateLeft,
               History()),
-          _buildMenuItem(context, "Transfer", FontAwesomeIcons.moneyBillTransfer, Transfer())
+          _buildMenuItem(
+              context,
+              "Transfer",
+              FontAwesomeIcons.moneyBillTransfer,
+              Transfer()
+          ),
+          ListTile(
+            leading: const Text(
+              "Switch theme",
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w300
+              ),
+            ),
+            title: Switch(
+                value: _isSwitched.value,
+                onChanged: (value){
+                  _isSwitched.value = value;
+                  _changeTheme(value);
+                }
+            ),
+          )
         ],
       ),
     );
