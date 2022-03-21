@@ -138,6 +138,21 @@ class HistoryPreview extends HookWidget{
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    IconData _icon = FontAwesomeIcons.dollarSign;
+    switch(type){
+      case "receive":
+        _icon = FontAwesomeIcons.inbox;
+        break;
+      case "send":
+        _icon =  FontAwesomeIcons.paperPlane;
+        break;
+      case "buy":
+        _icon = FontAwesomeIcons.bagShopping;
+        break;
+      case "sell":
+        _icon = FontAwesomeIcons.dollarSign;
+        break;
+    }
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -164,18 +179,14 @@ class HistoryPreview extends HookWidget{
           child: Row(
             children: [
               Container(
-                child: type == "receive" ? FaIcon(
-                  FontAwesomeIcons.inbox,
-                  size: 50,
-                ) : FaIcon(
-                  FontAwesomeIcons.paperPlane,
+                child: FaIcon(
+                  _icon,
                   size: 50,
                 ),
               ),
               Container(
                 padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
                 width: MediaQuery.of(context).size.width * 0.6,
-                //color: Colors.blue,
                 child: Column(
                   children: [
                     Row(
@@ -183,10 +194,10 @@ class HistoryPreview extends HookWidget{
                       children: [
                         Text.rich(TextSpan(children: [
                           TextSpan(text: "${capitalize(type)}", style: _typeStyle),
-                          TextSpan(text: type == "receive" ? "\nSender" : "\nRecipient", style: _subTypeStyle)
+                          TextSpan(text: type == "receive" || type == "buy" ? "\nSender" : "\nRecipient", style: _subTypeStyle)
                         ])),
                         Text.rich(TextSpan(children: [
-                          TextSpan(text: type == "receive" ? "+ ${value} ${coin}" : "- ${value} ${coin}", style: _typeStyle),
+                          TextSpan(text: type == "receive" || type == "buy" ? "+ ${value} ${coin}" : "- ${value} ${coin}", style: _typeStyle),
                           TextSpan(text: "\nWallet number", style: _subTypeStyle)
                         ])),
                       ],

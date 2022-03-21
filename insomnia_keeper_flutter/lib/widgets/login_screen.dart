@@ -26,13 +26,10 @@ class LoginScreen extends HookWidget{
                 fontWeight: FontWeight.w300
             ),
           ),
-          //LOGO HERE
-          // Container(
-          //   height: MediaQuery.of(context).size.height * 0.4,
-          // ),
+          SizedBox(height: 20,),
           Container(
             margin: EdgeInsets.symmetric(vertical: 10),
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+            padding: EdgeInsets.symmetric(vertical: 5),
             width: MediaQuery.of(context).size.width * 0.8,
             child: TextField(
               decoration: InputDecoration(
@@ -43,10 +40,10 @@ class LoginScreen extends HookWidget{
           ),
           Container(
             margin: EdgeInsets.symmetric(vertical: 10),
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+            padding: EdgeInsets.symmetric(vertical: 5),
             width: MediaQuery.of(context).size.width * 0.8,
             child: TextField(
-              obscureText: _isVisible.value,
+              obscureText: !_isVisible.value,
               decoration: InputDecoration(
                   icon: Icon(Icons.lock),
                   hintText: "Enter your password",
@@ -63,7 +60,7 @@ class LoginScreen extends HookWidget{
             margin: EdgeInsets.symmetric(vertical: 10),
             child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  minimumSize: Size(MediaQuery.of(context).size.width * 0.7, 50),
+                  minimumSize: Size(MediaQuery.of(context).size.width * 0.8, 50),
                 ),
                 onPressed: (){},
                 child: const Text(

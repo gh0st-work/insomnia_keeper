@@ -16,6 +16,8 @@ class AddDrawer extends HookWidget{
 
   }
 
+  final TextStyle _groupStyle = TextStyle(fontSize: 18, fontWeight: FontWeight.w300);
+
   Widget _buildDrawerHeader(){
     return DrawerHeader(
         child: RichText(
@@ -66,7 +68,66 @@ class AddDrawer extends HookWidget{
             builder: (BuildContext context) => route));
       },
     );
-}
+  }
+
+  Widget _buildHistoryTile(BuildContext context){
+    return  ListTile(
+      title: Text("History"),
+      leading: FaIcon(FontAwesomeIcons.clockRotateLeft),
+      onTap: (){
+        showModalBottomSheet<void>(
+            context: context,
+            builder: (BuildContext context){
+              return Container(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: Size(MediaQuery.of(context).size.width * 0.75, 50),
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => History(historyType: "purchase")),
+                          );
+                        },
+                        child: const Text(
+                          "Purchase history",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w300,
+                              fontSize: 20
+                          ),
+                        )
+                    ),
+                    SizedBox(height: 50,),
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: Size(MediaQuery.of(context).size.width * 0.75, 50),
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => History(historyType: "trades")),
+                          );
+                        },
+                        child: const Text(
+                          "History of trades",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w300,
+                              fontSize: 20
+                          ),
+                        )
+                    ),
+                  ],
+                ),
+              );
+            }
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +136,9 @@ class AddDrawer extends HookWidget{
         padding: EdgeInsets.zero,
         children: <Widget>[
           _buildDrawerHeader(),
+          ListTile(
+            title: Text("Preferences", style: _groupStyle,),
+          ),
           Divider(),
           PopupMenuButton<String>(
             child: _buildMenuItem(context, "Select currency", FontAwesomeIcons.coins, null),
@@ -90,23 +154,26 @@ class AddDrawer extends HookWidget{
               }).toList();
             },
           ),
-          _buildMenuItem(
-              context,
-              "History",
-              FontAwesomeIcons.clockRotateLeft,
-              History()),
-          _buildMenuItem(
-              context,
-              "Transfer",
-              FontAwesomeIcons.moneyBillTransfer,
-              Transfer()
+          PopupMenuButton<String>(
+            child: _buildMenuItem(context, "Select language", FontAwesomeIcons.globe, null),
+            initialValue: currency[0],
+            offset: Offset(50, 50),
+            onSelected: choiceAction,
+            itemBuilder: (context){
+              return currency.map((String choice) {
+                return PopupMenuItem<String>(
+                    value: choice,
+                    child: Text(choice)
+                );
+              }).toList();
+            },
           ),
           ListTile(
             leading: const Text(
-              "Switch theme",
+              "Light theme",
               style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w300
+                  fontSize: 16,
+                  //fontWeight: FontWeight.w300
               ),
             ),
             title: Switch(
@@ -116,7 +183,18 @@ class AddDrawer extends HookWidget{
                   _changeTheme(value);
                 }
             ),
-          )
+          ),
+          ListTile(
+            title: Text("Manage", style: _groupStyle,),
+          ),
+          Divider(),
+          _buildHistoryTile(context),
+          _buildMenuItem(
+              context,
+              "Transfer",
+              FontAwesomeIcons.moneyBillTransfer,
+              Transfer()
+          ),
         ],
       ),
     );

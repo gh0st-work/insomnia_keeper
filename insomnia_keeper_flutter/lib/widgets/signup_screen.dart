@@ -11,6 +11,7 @@ class SignupScreen extends HookWidget{
     final _isVisible = useState(false);
     final _isPasswordCharacters = useState(false);
     final theme = Theme.of(context);
+    final _accessPassword = useState(false);
 
     onPasswordChange(String password){
       _isPasswordCharacters.value = false;
@@ -36,13 +37,10 @@ class SignupScreen extends HookWidget{
                 fontWeight: FontWeight.w300
             ),
           ),
-          //LOGO HERE
-          // Container(
-          //   height: MediaQuery.of(context).size.height * 0.4,
-          // ),
+          SizedBox(height: 20,),
           Container(
             margin: EdgeInsets.symmetric(vertical: 10),
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+            padding: EdgeInsets.symmetric(vertical: 5),
             width: MediaQuery.of(context).size.width * 0.8,
             child: TextField(
               onChanged: (String value){},
@@ -54,7 +52,7 @@ class SignupScreen extends HookWidget{
           ),
           Container(
             margin: EdgeInsets.symmetric(vertical: 10),
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+            padding: EdgeInsets.symmetric(vertical: 5),
             width: MediaQuery.of(context).size.width * 0.8,
             child: TextField(
               onChanged: (password) => onPasswordChange(password),
@@ -80,7 +78,7 @@ class SignupScreen extends HookWidget{
                 height: 20,
                 decoration: BoxDecoration(
                     color: _isPasswordCharacters.value ? Colors.green : Colors.transparent,
-                    border: _isPasswordCharacters.value ? Border.all(color: Colors.transparent) : Border.all(color: Colors.white),
+                    border: _isPasswordCharacters.value ? Border.all(color: Colors.transparent) : Border.all(color: Colors.redAccent),
                     borderRadius: BorderRadius.circular(50)
                 ),
                 child: Center(
@@ -92,7 +90,72 @@ class SignupScreen extends HookWidget{
                 ),
               ),
               SizedBox(width: 10,),
-              Text("Contains at least 16 characters")
+              Text(
+                  "Contains at least 16 characters",
+                  style: TextStyle(
+                      fontWeight: FontWeight.w300,
+                      fontSize: 16,
+                      color: _isPasswordCharacters.value ? Colors.green : Colors.redAccent
+                  )
+              )
+            ],
+          ),
+          SizedBox(height: 30,),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              GestureDetector(
+                onTap: (){
+                  _accessPassword.value = !_accessPassword.value;
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          // padding: EdgeInsets.symmetric(horizontal: 10),
+                          width: 20,
+                          height: 20,
+                          decoration: BoxDecoration(
+                              color: _accessPassword.value ? Colors.green : Colors.transparent,
+                              border: _accessPassword.value ? Border.all(color: Colors.transparent) : Border.all(color: Colors.redAccent),
+                              borderRadius: BorderRadius.circular(50)
+                          ),
+                        ),
+                        Icon(
+                          Icons.check,
+                          color: Colors.white,
+                          size: _accessPassword.value ? 15 : 0,
+                        ),
+                      ],
+                    ),
+                    SizedBox(width: 10,),
+                    Column(
+                      children: [
+                        Text(
+                            "I agree that",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w300,
+                                fontSize: 16,
+                                color: _accessPassword.value ? Colors.green : Colors.redAccent
+                            )
+                        ),
+                        Text(
+                          "I will not be able to recover my password",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w300,
+                              fontSize: 16,
+                              color: _accessPassword.value ? Colors.green : Colors.redAccent
+                          ),
+                        )
+                      ],
+                    )
+                  ],
+                )
+              ),
             ],
           ),
           SizedBox(height: 20,),
@@ -100,14 +163,14 @@ class SignupScreen extends HookWidget{
             margin: EdgeInsets.symmetric(vertical: 10),
             child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  minimumSize: Size(MediaQuery.of(context).size.width * 0.7, 50),
+                  minimumSize: Size(MediaQuery.of(context).size.width * 0.8, 50),
                 ),
-                onPressed: _isPasswordCharacters.value ? (){} : null,
+                onPressed: _isPasswordCharacters.value && _accessPassword.value ? (){} : null,
                 child: const Text(
                   "SIGNUP",
                   style: TextStyle(
-                      fontWeight: FontWeight.w300,
-                      fontSize: 16
+                      fontWeight: FontWeight.w500,
+                      fontSize: 18
                   ),
                 )
             ),

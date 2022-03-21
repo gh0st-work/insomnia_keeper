@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:insomnia_keeper_flutter/widgets/history_preview.dart';
 
 class History extends HookWidget {
-  final TextStyle _typeStyle =
-      const TextStyle(fontSize: 18, fontWeight: FontWeight.w300);
-  final TextStyle _subTypeStyle =
-      const TextStyle(fontSize: 14, fontWeight: FontWeight.w300);
-  final TextStyle _subDescriptionStyle =
-      const TextStyle(fontSize: 16, fontWeight: FontWeight.w300);
+  final historyType;
+
+  History({required this.historyType});
 
   List<MokTransfers> transfers = [
     MokTransfers(
@@ -31,7 +27,7 @@ class History extends HookWidget {
         comission: "0000.1",
         message: "hi there"),
     MokTransfers(
-        type: "receive",
+        type: "buy",
         coin: "TON",
         date: "02.01.2022",
         value: "100",
@@ -49,7 +45,7 @@ class History extends HookWidget {
         comission: "0000.1",
         message: "hi there"),
     MokTransfers(
-        type: "receive",
+        type: "sell",
         coin: "TON",
         date: "01.01.2022",
         value: "100",
@@ -60,9 +56,15 @@ class History extends HookWidget {
   ];
 
 
+
+
   @override
   Widget build(BuildContext context) {
     transfers.sort((a, b) => a.getDate().compareTo(b.getDate()));
+    final buySellTransfers = transfers.where((element) => element.getType()=="buy" || element.getType()=="sell").toList();
+    final receiveSendTransfers = transfers.where((element) => element.getType()=="receive" || element.getType()=="send").toList();
+    final _transfers = historyType == "trades" ? receiveSendTransfers : buySellTransfers;
+
     return Scaffold(
         appBar: AppBar(
           title: Text("History"),
@@ -75,11 +77,11 @@ class History extends HookWidget {
           child: Container(
             margin: EdgeInsets.symmetric(vertical: 50),
             width: MediaQuery.of(context).size.width * 0.8,
-            child: ListView.builder(
+            child: _transfers.length != 0 ?ListView.builder(
                 scrollDirection: Axis.vertical,
-                itemCount: transfers.length,
+                itemCount: _transfers.length,
                 itemBuilder: (context, index){
-                  MokTransfers transfer = transfers[index];
+                  MokTransfers transfer = _transfers[index];
                   print(transfer.type);
                   return HistoryPreview(
                       type: transfer.type,
@@ -89,8 +91,18 @@ class History extends HookWidget {
                       senderWallet: transfer.senderWallet,
                       transferDescription: transfer.transferDescription,
                       comission: transfer.comission,
-                      message: transfer.message);
+                      message: transfer.message
+                  );
                 }
+            )
+            : Center(
+              child: Text(
+                  "It`s empty now",
+                style: TextStyle(
+                  fontWeight: FontWeight.w300,
+                  fontSize: 32
+                ),
+              ),
             ),
           )
         )
@@ -119,5 +131,8 @@ class MokTransfers {
       required this.message});
   getDate(){
     return date;
+  }
+  getType(){
+    return type;
   }
 }

@@ -7,6 +7,7 @@ class WelcomeScreen extends HookWidget{
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -17,19 +18,32 @@ class WelcomeScreen extends HookWidget{
           const Text(
             "Welcome to Insomnia Keeper",
             style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w300
+                fontSize: 26,
+                fontWeight: FontWeight.w400
             ),
           ),
-          //LOGO HERE
+
           Container(
+            margin: EdgeInsets.symmetric(vertical: 20),
+            width: MediaQuery.of(context).size.width * 0.8,
             height: MediaQuery.of(context).size.height * 0.5,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(50)
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: const Image(
+                image: AssetImage("assets/images/logo.jpg"),
+                fit: BoxFit.cover,
+              ),
+            )
           ),
           Container(
             margin: EdgeInsets.symmetric(vertical: 10),
             child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  minimumSize: Size(MediaQuery.of(context).size.width * 0.6, 50),
+                  minimumSize: Size(MediaQuery.of(context).size.width * 0.8, 50),
+                    primary: theme.cardColor
                 ),
                 onPressed: (){
                   Navigator.push(
@@ -40,8 +54,8 @@ class WelcomeScreen extends HookWidget{
                 child: const Text(
                   "LOGIN",
                   style: TextStyle(
-                    fontWeight: FontWeight.w300,
-                    fontSize: 16
+                    fontWeight: FontWeight.w400,
+                    fontSize: 18
                   ),
                 )
             ),
@@ -50,7 +64,8 @@ class WelcomeScreen extends HookWidget{
             margin: EdgeInsets.symmetric(vertical: 10),
             child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  minimumSize: Size(MediaQuery.of(context).size.width * 0.6, 50),
+                  minimumSize: Size(MediaQuery.of(context).size.width * 0.8, 50),
+                  primary: theme.primaryColorDark
                 ),
                 onPressed: (){
                   Navigator.push(
@@ -61,8 +76,8 @@ class WelcomeScreen extends HookWidget{
                 child: const Text(
                   "SIGNUP",
                   style: TextStyle(
-                      fontWeight: FontWeight.w300,
-                      fontSize: 16
+                      fontWeight: FontWeight.w400,
+                      fontSize: 18
                   ),
                 )
             ),
