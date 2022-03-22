@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:insomnia_keeper_flutter/misc/neumorphism_button.dart';
 import 'package:insomnia_keeper_flutter/misc/rem.dart';
 
 class Send extends HookWidget{
@@ -7,6 +8,8 @@ class Send extends HookWidget{
   final double amountCoins;
 
   Send({required this.coinname, required this.amountCoins});
+
+  final TextStyle _textFieldStyle = TextStyle(fontWeight: FontWeight.w300, fontSize: 20);
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +29,8 @@ class Send extends HookWidget{
               child: TextField(
                 decoration: InputDecoration(
                     icon: Icon(Icons.monetization_on),
-                    hintText: "Enter amount"
+                    hintText: "Enter amount",
+                    hintStyle: _textFieldStyle
                 ),
               ),
             ),
@@ -37,24 +41,23 @@ class Send extends HookWidget{
               child: TextField(
                 decoration: InputDecoration(
                     icon: Icon(Icons.wallet_travel_rounded),
-                    hintText: "Enter wallet"
+                    hintText: "Enter wallet",
+                    hintStyle: _textFieldStyle
                 ),
               ),
             ),
             Container(
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: rem(5)),
-              child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: Size(MediaQuery.of(context).size.width * 0.75, 50),
+              child: NeumorphismButton(
+                width: MediaQuery.of(context).size.width * 0.75,
+                onPressed: () {  },
+                child: const Text(
+                  "Send",
+                  style: TextStyle(
+                      fontWeight: FontWeight.w300,
+                      fontSize: 20
                   ),
-                  onPressed: (){},
-                  child: const Text(
-                    "Send",
-                    style: TextStyle(
-                        fontWeight: FontWeight.w300,
-                        fontSize: 20
-                    ),
-                  )
+                ),
               ),
             )
           ],

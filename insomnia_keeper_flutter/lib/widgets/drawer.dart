@@ -2,9 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:insomnia_keeper_flutter/widgets/buy_sell_screen.dart';
+import 'package:insomnia_keeper_flutter/widgets/receive_send_screen.dart';
 import 'package:insomnia_keeper_flutter/widgets/transfer_screen.dart';
 
 
+import '../misc/neumorphism_button.dart';
 import '../misc/rem.dart';
 import 'history_screen.dart';
 
@@ -20,6 +23,7 @@ class AddDrawer extends HookWidget{
 
   Widget _buildDrawerHeader(){
     return DrawerHeader(
+        margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
         child: RichText(
           text: TextSpan(
               text: "Insomnia Keeper",
@@ -29,16 +33,9 @@ class AddDrawer extends HookWidget{
               ),
               children: [
                 TextSpan(
-                  text: "\nUser Name",
+                  text: "\n@tag",
                   style: TextStyle(
                       fontSize: rem(6),
-                      fontWeight: FontWeight.w300
-                  ),
-                ),
-                TextSpan(
-                  text: "\nWallet number",
-                  style: TextStyle(
-                      fontSize: rem(4),
                       fontWeight: FontWeight.w300
                   ),
                 ),
@@ -83,42 +80,38 @@ class AddDrawer extends HookWidget{
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: Size(MediaQuery.of(context).size.width * 0.75, 50),
+                    NeumorphismButton(
+                      width: MediaQuery.of(context).size.width * 0.75,
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => History(historyType: "purchase")),
+                        );
+                      },
+                      child: Text(
+                        "Purchase history",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w300,
+                            fontSize: 20
                         ),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => History(historyType: "purchase")),
-                          );
-                        },
-                        child: const Text(
-                          "Purchase history",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w300,
-                              fontSize: 20
-                          ),
-                        )
+                      ),
                     ),
                     SizedBox(height: 50,),
-                    ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: Size(MediaQuery.of(context).size.width * 0.75, 50),
+                    NeumorphismButton(
+                      width: MediaQuery.of(context).size.width * 0.75,
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => History(historyType: "trades")),
+                        );
+                      },
+                      child: Text(
+                        "History of trades",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w300,
+                            fontSize: 20
                         ),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => History(historyType: "trades")),
-                          );
-                        },
-                        child: const Text(
-                          "History of trades",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w300,
-                              fontSize: 20
-                          ),
-                        )
+                      ),
                     ),
                   ],
                 ),
@@ -136,6 +129,23 @@ class AddDrawer extends HookWidget{
         padding: EdgeInsets.zero,
         children: <Widget>[
           _buildDrawerHeader(),
+          ListTile(
+            title: Text("Manage", style: _groupStyle,),
+          ),
+          Divider(),
+          //_buildHistoryTile(context),
+          _buildMenuItem(
+              context,
+              "Buy/sell",
+              FontAwesomeIcons.basketShopping,
+              BuySellScreen()
+          ),
+          _buildMenuItem(
+              context,
+              "Receive/send",
+              FontAwesomeIcons.moneyBillTransfer,
+              ReceiveSendScreen()
+          ),
           ListTile(
             title: Text("Preferences", style: _groupStyle,),
           ),
@@ -184,16 +194,11 @@ class AddDrawer extends HookWidget{
                 }
             ),
           ),
-          ListTile(
-            title: Text("Manage", style: _groupStyle,),
-          ),
-          Divider(),
-          _buildHistoryTile(context),
           _buildMenuItem(
               context,
-              "Transfer",
-              FontAwesomeIcons.moneyBillTransfer,
-              Transfer()
+              "Log out",
+              FontAwesomeIcons.arrowRightFromBracket,
+              null
           ),
         ],
       ),

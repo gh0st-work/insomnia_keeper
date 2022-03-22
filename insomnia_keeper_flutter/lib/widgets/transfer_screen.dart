@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:insomnia_keeper_flutter/misc/neumorphism_button.dart';
 
 class Transfer extends HookWidget{
 
@@ -60,13 +61,10 @@ class Transfer extends HookWidget{
               ),
             ),
             SizedBox(height: 30,),
-            ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  minimumSize: Size.fromHeight(50)
-                ),
-                onPressed: (){},
-                child: Center(child: Text("Send", style: _textFieldStyle,),)
-            )
+            NeumorphismButton(
+                width: MediaQuery.of(context).size.width,
+                child: Text("Send", style: _textFieldStyle,),
+                onPressed: (){  })
           ],
         ),
       ),

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -165,7 +166,7 @@ class HistoryPreview extends HookWidget{
         ElevatedButton(
           style: ElevatedButton.styleFrom(
               primary: theme.cardColor,
-              maximumSize: Size(MediaQuery.of(context).size.width * 0.8,
+              maximumSize: Size(MediaQuery.of(context).size.width * 0.9,
                   MediaQuery.of(context).size.height * 0.2),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10))),
@@ -177,6 +178,7 @@ class HistoryPreview extends HookWidget{
                 });
           },
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
                 child: FaIcon(
@@ -186,7 +188,7 @@ class HistoryPreview extends HookWidget{
               ),
               Container(
                 padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                width: MediaQuery.of(context).size.width * 0.6,
+                width: MediaQuery.of(context).size.width * 0.7,
                 child: Column(
                   children: [
                     Row(

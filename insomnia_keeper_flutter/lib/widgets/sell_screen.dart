@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:insomnia_keeper_flutter/misc/neumorphism_button.dart';
 import 'package:insomnia_keeper_flutter/misc/rem.dart';
+import 'package:insomnia_keeper_flutter/widgets/deal_sell_screen.dart';
 
 class SellScreen extends HookWidget{
   final coinName;
@@ -31,7 +33,23 @@ class SellScreen extends HookWidget{
                   primary: theme.cardColor,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))
               ),
-              onPressed: () {  },
+              onPressed: () {
+                showModalBottomSheet<void>(
+                    isScrollControlled: true,
+                    context: context,
+                    builder: (BuildContext context){
+                      return SellDealScreen(
+                        coinName: coinName,
+                        payment: payment,
+                        amount: mokTrade.amountForPrice,
+                        price: mokTrade.price,
+                        total: mokTrade.coinsamount,
+                        priceFrom: mokTrade.from,
+                        priceTo: mokTrade.to,
+                      );
+                    }
+                );
+              },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -143,19 +161,17 @@ class SellScreen extends HookWidget{
                 hintStyle: _textFieldStyle
             ),
           ),
-          ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                minimumSize: Size.fromHeight(50),
-              ),
-              onPressed: (){},
+          SizedBox(height: 10,),
+          NeumorphismButton(
               child: Text(
                 "Create deal",
                 style: TextStyle(
                     fontWeight: FontWeight.w300,
                     fontSize: rem(6)
                 ),
-              )
-          ),
+              ),
+              onPressed: (){}
+          )
         ],
       ),
     );
@@ -195,26 +211,23 @@ class SellScreen extends HookWidget{
               _buildOffers(context),
               Container(
                 margin: EdgeInsets.symmetric(vertical: 20),
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: Size.fromHeight(50),
+                child: NeumorphismButton(
+                  onPressed: (){
+                    showModalBottomSheet<void>(
+                        context: context,
+                        builder: (BuildContext context){
+                          return _buildNewDeal();
+                        }
+                    );
+                  },
+                  child: Text(
+                    "Make a deal",
+                    style: TextStyle(
+                        fontWeight: FontWeight.w300,
+                        fontSize: rem(6)
                     ),
-                    onPressed: (){
-                      showModalBottomSheet<void>(
-                          context: context,
-                          builder: (BuildContext context){
-                            return _buildNewDeal();
-                          }
-                      );
-                    },
-                    child: Text(
-                      "Make a deal",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w300,
-                          fontSize: rem(6)
-                      ),
-                    )
-                ),
+                  ),
+                )
               )
             ],
           ),

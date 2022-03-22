@@ -65,46 +65,61 @@ class History extends HookWidget {
     final receiveSendTransfers = transfers.where((element) => element.getType()=="receive" || element.getType()=="send").toList();
     final _transfers = historyType == "trades" ? receiveSendTransfers : buySellTransfers;
 
-    return Scaffold(
-        appBar: AppBar(
-          title: Text("History"),
-          centerTitle: true,
-        ),
-        body: Container(
-          width: double.infinity,
-          height: double.infinity,
-          alignment: Alignment.center,
-          child: Container(
-            margin: EdgeInsets.symmetric(vertical: 50),
-            width: MediaQuery.of(context).size.width * 0.8,
-            child: _transfers.length != 0 ?ListView.builder(
-                scrollDirection: Axis.vertical,
-                itemCount: _transfers.length,
-                itemBuilder: (context, index){
-                  MokTransfers transfer = _transfers[index];
-                  print(transfer.type);
-                  return HistoryPreview(
-                      type: transfer.type,
-                      coin: transfer.coin,
-                      date: transfer.date,
-                      value: transfer.value,
-                      senderWallet: transfer.senderWallet,
-                      transferDescription: transfer.transferDescription,
-                      comission: transfer.comission,
-                      message: transfer.message
-                  );
-                }
-            )
-            : Center(
-              child: Text(
-                  "It`s empty now",
-                style: TextStyle(
-                  fontWeight: FontWeight.w300,
-                  fontSize: 32
-                ),
-              ),
-            ),
+    return Container(
+        width: double.infinity,
+        height: double.infinity,
+        alignment: Alignment.center,
+        child: Container(
+          margin: EdgeInsets.symmetric(vertical: 20),
+          width: MediaQuery.of(context).size.width * 0.9,
+          child: _transfers.length != 0 ?ListView.builder(
+              scrollDirection: Axis.vertical,
+              itemCount: _transfers.length,
+              itemBuilder: (context, index){
+                MokTransfers transfer = _transfers[index];
+                print(transfer.type);
+                return HistoryPreview(
+                    type: transfer.type,
+                    coin: transfer.coin,
+                    date: transfer.date,
+                    value: transfer.value,
+                    senderWallet: transfer.senderWallet,
+                    transferDescription: transfer.transferDescription,
+                    comission: transfer.comission,
+                    message: transfer.message
+                );
+              }
           )
+              : Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        "It`s empty now",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w300,
+                            fontSize: 32
+                        ),
+                      ),
+                      Container(
+                          //margin: EdgeInsets.symmetric(vertical: 20),
+                          width: MediaQuery.of(context).size.width * 0.8,
+                          height: MediaQuery.of(context).size.height * 0.5,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(50)
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: const Image(
+                              image: AssetImage("assets/images/logo.jpg"),
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                      ),
+                    ],
+                  )
+              ),
         )
     );
   }

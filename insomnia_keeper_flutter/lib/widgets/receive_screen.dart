@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:insomnia_keeper_flutter/misc/neumorphism_button.dart';
 import 'package:insomnia_keeper_flutter/misc/rem.dart';
 import 'package:share/share.dart';
 
@@ -15,6 +16,7 @@ class Recieve extends HookWidget{
 
     return Scaffold(
       body: Container(
+        margin: EdgeInsets.symmetric(vertical: 20),
         height: MediaQuery.of(context).size.height * 0.5,
         width: double.infinity,
         child: Column(
@@ -38,27 +40,23 @@ class Recieve extends HookWidget{
             SizedBox(height: 30,),
 
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: rem(5)),
-              child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: Size(MediaQuery.of(context).size.width * 0.75, 50),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              child: NeumorphismButton(
+                width: MediaQuery.of(context).size.width * 0.75,
+                onPressed: () => _copyToClipboard(context),
+                child: const Text(
+                  "Copy Address",
+                  style: TextStyle(
+                      fontWeight: FontWeight.w300,
+                      fontSize: 20
                   ),
-                  onPressed: () => _copyToClipboard(context),
-                  child: const Text(
-                    "Copy Address",
-                    style: TextStyle(
-                        fontWeight: FontWeight.w300,
-                        fontSize: 20
-                    ),
-                  )
+                ),
               ),
             ),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 20,),
-              child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: Size(MediaQuery.of(context).size.width * 0.75, 50),
-                  ),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              child: NeumorphismButton(
+                  width: MediaQuery.of(context).size.width * 0.75,
                   onPressed: () => _onShare(context, _wallet),
                   child: const Text(
                     "Share Address",
@@ -66,7 +64,7 @@ class Recieve extends HookWidget{
                         fontWeight: FontWeight.w300,
                         fontSize: 20
                     ),
-                  )
+                  ),
               ),
             )
           ],

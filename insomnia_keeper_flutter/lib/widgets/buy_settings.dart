@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:insomnia_keeper_flutter/misc/neumorphism_button.dart';
 import 'package:insomnia_keeper_flutter/widgets/buy_screen.dart';
 
 import '../misc/rem.dart';
@@ -112,23 +113,21 @@ class BuySettings extends HookWidget{
                     ),
                     Align(
                       alignment: Alignment.bottomCenter,
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: Size.fromHeight(50),
+                      child: NeumorphismButton(
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        onPressed: (){
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => BuyScreen(coinName: coinname, payment: dropdownValue.value,)),
+                          );
+                        },
+                        child: const Text(
+                          "BUY",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w300,
+                              fontSize: 20
                           ),
-                          onPressed: (){
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => BuyScreen(coinName: coinname, payment: dropdownValue.value,)),
-                            );
-                          },
-                          child: const Text(
-                            "Trade",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w300,
-                                fontSize: 20
-                            ),
-                          )
+                        ),
                       ),
                     )
                   ],

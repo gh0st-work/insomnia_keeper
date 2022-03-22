@@ -193,7 +193,7 @@ class CoinScreen extends HookWidget{
           children: [
             ElevatedButton.icon(
               icon: FaIcon(
-                FontAwesomeIcons.peopleArrows,
+                FontAwesomeIcons.peopleArrowsLeftRight,
                 size: rem(5),
               ),
               style: ElevatedButton.styleFrom(
