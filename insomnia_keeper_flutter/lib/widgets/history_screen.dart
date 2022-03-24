@@ -4,8 +4,14 @@ import 'package:insomnia_keeper_flutter/widgets/history_preview.dart';
 
 class History extends HookWidget {
   final historyType;
+  final coinName;
+  final isCoinPage;
 
-  History({required this.historyType});
+  History({
+    required this.historyType,
+    this.coinName = "",
+    this.isCoinPage = false
+  });
 
   List<MokTransfers> transfers = [
     MokTransfers(
@@ -26,15 +32,15 @@ class History extends HookWidget {
         transferDescription: "description",
         comission: "0000.1",
         message: "hi there"),
-    MokTransfers(
-        type: "buy",
-        coin: "TON",
-        date: "02.01.2022",
-        value: "100",
-        senderWallet: "dadasda@!2fasfaf",
-        transferDescription: "description",
-        comission: "0000.1",
-        message: "hi there"),
+    // MokTransfers(
+    //     type: "buy",
+    //     coin: "TON",
+    //     date: "02.01.2022",
+    //     value: "100",
+    //     senderWallet: "dadasda@!2fasfaf",
+    //     transferDescription: "description",
+    //     comission: "0000.1",
+    //     message: "hi there"),
     MokTransfers(
         type: "receive",
         coin: "TON",
@@ -44,15 +50,15 @@ class History extends HookWidget {
         transferDescription: "description",
         comission: "0000.1",
         message: "hi there"),
-    MokTransfers(
-        type: "sell",
-        coin: "TON",
-        date: "01.01.2022",
-        value: "100",
-        senderWallet: "dadasda@!2fasfaf",
-        transferDescription: "description",
-        comission: "0000.1",
-        message: "hi there"),
+    // MokTransfers(
+    //     type: "sell",
+    //     coin: "TON",
+    //     date: "01.01.2022",
+    //     value: "100",
+    //     senderWallet: "dadasda@!2fasfaf",
+    //     transferDescription: "description",
+    //     comission: "0000.1",
+    //     message: "hi there"),
   ];
 
 
@@ -63,7 +69,8 @@ class History extends HookWidget {
     transfers.sort((a, b) => a.getDate().compareTo(b.getDate()));
     final buySellTransfers = transfers.where((element) => element.getType()=="buy" || element.getType()=="sell").toList();
     final receiveSendTransfers = transfers.where((element) => element.getType()=="receive" || element.getType()=="send").toList();
-    final _transfers = historyType == "trades" ? receiveSendTransfers : buySellTransfers;
+    final _transfers = isCoinPage ? transfers.where((element) => element.getCoinName() == coinName).toList() :
+    historyType == "trades" ? receiveSendTransfers : buySellTransfers;
 
     return Container(
         width: double.infinity,
@@ -72,12 +79,11 @@ class History extends HookWidget {
         child: Container(
           margin: EdgeInsets.symmetric(vertical: 20),
           width: MediaQuery.of(context).size.width * 0.9,
-          child: _transfers.length != 0 ?ListView.builder(
+          child: _transfers.length != 0 ? ListView.builder(
               scrollDirection: Axis.vertical,
               itemCount: _transfers.length,
               itemBuilder: (context, index){
                 MokTransfers transfer = _transfers[index];
-                print(transfer.type);
                 return HistoryPreview(
                     type: transfer.type,
                     coin: transfer.coin,
@@ -90,10 +96,8 @@ class History extends HookWidget {
                 );
               }
           )
-              : Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+              :  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
                         "It`s empty now",
@@ -102,24 +106,23 @@ class History extends HookWidget {
                             fontSize: 32
                         ),
                       ),
+                      SizedBox(height: 20,),
                       Container(
-                          //margin: EdgeInsets.symmetric(vertical: 20),
                           width: MediaQuery.of(context).size.width * 0.8,
-                          height: MediaQuery.of(context).size.height * 0.5,
+                          height: isCoinPage ? MediaQuery.of(context).size.height * 0.4 : MediaQuery.of(context).size.height * 0.5,
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(50)
                           ),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(10),
-                            child: const Image(
+                            child: Image(
                               image: AssetImage("assets/images/logo.jpg"),
-                              fit: BoxFit.cover,
+                              fit: isCoinPage ? BoxFit.contain : BoxFit.cover,
                             ),
                           )
                       ),
                     ],
                   )
-              ),
         )
     );
   }
@@ -149,5 +152,8 @@ class MokTransfers {
   }
   getType(){
     return type;
+  }
+  getCoinName(){
+    return coin;
   }
 }

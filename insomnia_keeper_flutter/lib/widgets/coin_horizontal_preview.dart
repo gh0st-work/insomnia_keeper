@@ -20,7 +20,7 @@ class CoinHorizontal extends HookWidget{
 
   Widget _buildTitleIcon(BuildContext context){
     return Container(
-      width: MediaQuery.of(context).size.width * 0.2,
+      width: MediaQuery.of(context).size.width * 0.25,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -53,7 +53,7 @@ class CoinHorizontal extends HookWidget{
     final color = (percentChange > 0 ? Colors.greenAccent : Colors.redAccent);
     return Center(
       child: Container(
-        width: MediaQuery.of(context).size.width * 0.6,
+        width: MediaQuery.of(context).size.width * 0.7,
         child: PriceChart(lineColor: color),
       ),
     );
@@ -106,19 +106,14 @@ class CoinHorizontal extends HookWidget{
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
       child: Container(
         width: MediaQuery.of(context).size.width * 0.8,
         decoration: BoxDecoration(
+          color: theme.cardColor,
           borderRadius: BorderRadius.circular(10),
-          boxShadow: const [
-            BoxShadow(
-              spreadRadius: 2,
-              blurRadius: 3,
-              offset: Offset(1, 2),
-            ),
-          ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

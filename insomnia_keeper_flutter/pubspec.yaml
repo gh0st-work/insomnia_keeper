@@ -51,6 +51,8 @@ dependencies:
   supercharged: ^2.1.1
   sa3_liquid: ^1.0.1
   share: 2.0.1
+  syncfusion_flutter_charts: ^19.4.56
+  rxdart: ^0.27.3
 
 dev_dependencies:
   flutter_test:

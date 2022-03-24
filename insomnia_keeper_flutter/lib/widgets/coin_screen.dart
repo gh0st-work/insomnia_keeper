@@ -7,6 +7,7 @@ import 'package:insomnia_keeper_flutter/misc/chart_filter.dart';
 import 'package:insomnia_keeper_flutter/misc/price.dart';
 import 'package:insomnia_keeper_flutter/widgets/asset_price_chart.dart';
 import 'package:insomnia_keeper_flutter/widgets/buy_settings.dart';
+import 'package:insomnia_keeper_flutter/widgets/history_screen.dart';
 import 'package:insomnia_keeper_flutter/widgets/receive_screen.dart';
 import 'package:insomnia_keeper_flutter/widgets/sell_settings.dart';
 import 'package:insomnia_keeper_flutter/widgets/send_screen.dart';
@@ -247,7 +248,7 @@ class CoinScreen extends HookWidget{
 
   @override
   Widget build(BuildContext context) {
-
+    final ScrollController _firstController = ScrollController();
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -269,11 +270,27 @@ class CoinScreen extends HookWidget{
               _buildPrice(),
               _buildPriceChart(context),
               ChartFilter(),
-              // _buildStatistics(),
-              // _buildDescription(),
+              _buildButtons(context),
+              Container(
+                margin: EdgeInsets.only(top: 20),
+                child: Text(
+                  "History", 
+                  style: TextStyle(
+                    fontWeight: FontWeight.w300,
+                    fontSize: rem(10)
+                  ),
+                ),
+              ),
+              Container(
+                height: MediaQuery.of(context).size.height * 0.6,
+                child: Scrollbar(
+                  isAlwaysShown: true,
+                  controller: _firstController,
+                  child: History(historyType: "", coinName: title, isCoinPage: true,),
+                ),
+              )
             ],
           ),
-          _buildButtons(context)
         ],
       ),
     );
