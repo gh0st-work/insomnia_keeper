@@ -134,7 +134,7 @@ class WalletScreen extends HookWidget {
                       MaterialPageRoute(builder: (context) => Analytics()),
                     );
                   },
-                  child: Container(height: 250, width: MediaQuery.of(context).size.width, color: Colors.transparent,),
+                  child: Container(height: 250,width: MediaQuery.of(context).size.width * 0.8, color: Colors.transparent,),
                 ),
               ],
             )

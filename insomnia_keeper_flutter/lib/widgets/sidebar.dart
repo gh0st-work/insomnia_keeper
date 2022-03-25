@@ -1,18 +1,51 @@
 
+import 'package:flutter/cupertino.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:insomnia_keeper_flutter/widgets/receive_send_screen.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
+import 'buy_sell_screen.dart';
+
 class SideBar extends HookWidget{
+
+  final TextStyle _groupStyle = TextStyle(fontSize: 18, fontWeight: FontWeight.w300);
+  final _isSwitched = useState(false);
+
+  void _changeTheme(bool value){
+
+  }
+
+  void choiceAction(String choice){
+    print("working");
+  }
+
+  List<String> currency = [
+    "USD",
+    "RUB",
+    "EUR"
+  ];
+
+  Widget _buildMenuItem(BuildContext context, String text, IconData icon, Widget? route) {
+    return ListTile(
+      title: Text(text, style: _groupStyle,),
+      leading: FaIcon(icon),
+      onTap: route == null ? (){} : (){
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (BuildContext context) => route)
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final _duration = Duration(milliseconds: 500);
     final _animationController = useAnimationController(duration: _duration);
-    var isSideBarOpenedStreamController = useStreamController();
-    var isSidebarOpenedStream = useStream(isSideBarOpenedStreamController.stream);
-    var isSidebarOpenedSink = isSideBarOpenedStreamController.sink;
+    var isSideBarOpenedStreamController = useStreamController<bool>();
     isSideBarOpenedStreamController = PublishSubject<bool>();
+    var isSidebarOpenedSink = isSideBarOpenedStreamController.sink;
 
     void onIconPressed() {
       final animationStatus = _animationController.status;
@@ -25,11 +58,12 @@ class SideBar extends HookWidget{
         _animationController.forward();
       }
     }
+
     final screenWidth = MediaQuery.of(context).size.width;
     final theme = Theme.of(context);
     return StreamBuilder<bool>(
       initialData: false,
-      stream: isSidebarOpenedStream.data,
+      stream: isSideBarOpenedStreamController.stream,
       builder: (context, isSideBarOpenedAsync) {
         return AnimatedPositioned(
           duration: _duration,
@@ -43,20 +77,20 @@ class SideBar extends HookWidget{
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   color: theme.cardColor,
-                  child: Column(
+                  child: ListView(
+                    scrollDirection: Axis.vertical,
                     children: <Widget>[
-                      SizedBox(
+                      const SizedBox(
                         height: 100,
                       ),
-                        ListTile(
+                        const ListTile(
                           title: Text(
-                            "Prateek",
+                            "Welcome",
                             style: TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.w800),
                           ),
                           subtitle: Text(
-                            "www.techieblossom.com",
+                            "@tag",
                             style: TextStyle(
-                              color: Color(0xFF1BB5FD),
                               fontSize: 18,
                             ),
                           ),
@@ -71,16 +105,86 @@ class SideBar extends HookWidget{
                       Divider(
                         height: 64,
                         thickness: 0.5,
-                        color: Colors.white.withOpacity(0.3),
+                        //color: Colors.white.withOpacity(0.3),
                         indent: 32,
                         endIndent: 32,
+                      ),
+                      ListTile(
+                        title: Text("Manage", style: _groupStyle,),
+                      ),
+                      Divider(),
+                      _buildMenuItem(
+                          context,
+                          "Buy/sell",
+                          FontAwesomeIcons.basketShopping,
+                          BuySellScreen()
+                      ),
+                      _buildMenuItem(
+                          context,
+                          "Receive/send",
+                          FontAwesomeIcons.moneyBillTransfer,
+                          ReceiveSendScreen()
+                      ),
+                      ListTile(
+                        title: Text("Preferences", style: _groupStyle,),
+                      ),
+                      Divider(),
+                      ListTile(
+                        leading: const Text(
+                          "Light theme",
+                          style: TextStyle(
+                            fontSize: 16,
+                            //fontWeight: FontWeight.w300
+                          ),
+                        ),
+                        title: Switch(
+                            value: _isSwitched.value,
+                            onChanged: (value){
+                              _isSwitched.value = value;
+                              _changeTheme(value);
+                            }
+                        ),
+                      ),
+                      PopupMenuButton<String>(
+                        child: _buildMenuItem(context, "Select currency", FontAwesomeIcons.coins, null),
+                        initialValue: currency[0],
+                        offset: Offset(50, 50),
+                        onSelected: choiceAction,
+                        itemBuilder: (context){
+                          return currency.map((String choice) {
+                            return PopupMenuItem<String>(
+                                value: choice,
+                                child: Text(choice)
+                            );
+                          }).toList();
+                        },
+                      ),
+                      PopupMenuButton<String>(
+                        child: _buildMenuItem(context, "Select language", FontAwesomeIcons.globe, null),
+                        initialValue: currency[0],
+                        offset: Offset(50, 50),
+                        onSelected: choiceAction,
+                        itemBuilder: (context){
+                          return currency.map((String choice) {
+                            return PopupMenuItem<String>(
+                                value: choice,
+                                child: Text(choice)
+                            );
+                          }).toList();
+                        },
+                      ),
+                      _buildMenuItem(
+                          context,
+                          "Log out",
+                          FontAwesomeIcons.arrowRightFromBracket,
+                          null
                       ),
                     ],
                   ),
                 ),
               ),
               Align(
-                alignment: Alignment(0, -0.9),
+                alignment: Alignment(0, -0.8),
                 child: GestureDetector(
                   onTap: () {
                     onIconPressed();
