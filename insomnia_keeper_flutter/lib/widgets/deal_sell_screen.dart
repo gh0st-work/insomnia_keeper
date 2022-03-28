@@ -30,7 +30,7 @@ class SellDealScreen extends HookWidget{
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.8,
+      //height: MediaQuery.of(context).size.height * 0.8,
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,

@@ -25,6 +25,10 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
+dependencies {
+    implementation 'com.android.support:multidex:2.0.1' //enter the latest multidex version
+}
+
 android {
     compileSdkVersion flutter.compileSdkVersion
 
@@ -48,6 +52,7 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        multiDexEnabled true
     }
 
     buildTypes {

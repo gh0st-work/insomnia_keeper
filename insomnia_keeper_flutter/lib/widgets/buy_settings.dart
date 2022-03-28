@@ -23,68 +23,23 @@ class BuySettings extends HookWidget{
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final dropdownValue = useState('Item 1');
-    return Scaffold(
-        body: Container(
-            alignment: Alignment.center,
-            child: Container(
-                padding: EdgeInsets.symmetric(horizontal: rem(3), vertical: rem(6)),
-                width: MediaQuery.of(context).size.width * 0.85,
-                height: MediaQuery.of(context).size.height * 0.6,
-                child: Stack(
+    return Container(
+        alignment: Alignment.center,
+        child: Container(
+            padding: EdgeInsets.symmetric(horizontal: rem(3), vertical: rem(6)),
+            width: MediaQuery.of(context).size.width * 0.85,
+            height: MediaQuery.of(context).size.height * 0.6,
+            child: Stack(
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         Column(
                           children: [
-                            Column(
-                              children: [
-                                Text(
-                                  "Give",
-                                  style: TextStyle(
-                                      fontSize: rem(10),
-                                      fontWeight: FontWeight.w300
-                                  ),
-                                ),
-                                Container(
-                                  height: MediaQuery.of(context).size.height * 0.08,
-                                  padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: theme.cardColor
-                                  ),
-                                  child: DropdownButton(
-                                    isExpanded: true,
-                                    underline: null,
-                                    // Initial Value
-                                    value: dropdownValue.value,
-                                    // Down Arrow Icon
-                                    icon: const Icon(Icons.keyboard_arrow_down),
-                                    // Array list of items
-                                    items: items.map((String items) {
-                                      return DropdownMenuItem(
-                                        value: items,
-                                        child: Text(
-                                          items,
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w300,
-                                              fontSize: rem(6)
-                                          ),
-                                        ),
-                                      );
-                                    }).toList(),
-                                    // After selecting the desired option,it will
-                                    // change button value to selected value
-                                    onChanged: (String? newValue) {
-                                      dropdownValue.value = newValue!;
-                                    },
-                                  ),
-                                )
-                              ],
-                            ),
-                            SizedBox(height: 30),
                             Text(
-                              "Get",
+                              "Give",
                               style: TextStyle(
                                   fontSize: rem(10),
                                   fontWeight: FontWeight.w300
@@ -97,41 +52,84 @@ class BuySettings extends HookWidget{
                                   borderRadius: BorderRadius.circular(10),
                                   color: theme.cardColor
                               ),
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                coinname,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w300,
-                                    fontSize: rem(6)
-                                ),
+                              child: DropdownButton(
+                                isExpanded: true,
+                                underline: null,
+                                // Initial Value
+                                value: dropdownValue.value,
+                                // Down Arrow Icon
+                                icon: const Icon(Icons.keyboard_arrow_down),
+                                // Array list of items
+                                items: items.map((String items) {
+                                  return DropdownMenuItem(
+                                    value: items,
+                                    child: Text(
+                                      items,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w300,
+                                          fontSize: rem(6)
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                                // After selecting the desired option,it will
+                                // change button value to selected value
+                                onChanged: (String? newValue) {
+                                  dropdownValue.value = newValue!;
+                                },
                               ),
                             )
                           ],
                         ),
-                        SizedBox(height: rem(18),),
-                      ],
-                    ),
-                    Align(
-                      alignment: Alignment.bottomCenter,
-                      child: NeumorphismButton(
-                        width: MediaQuery.of(context).size.width * 0.8,
-                        onPressed: (){
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => BuyScreen(coinName: coinname, payment: dropdownValue.value,)),
-                          );
-                        },
-                        child: const Text(
-                          "BUY",
+                        SizedBox(height: 30),
+                        Text(
+                          "Get",
                           style: TextStyle(
-                              fontWeight: FontWeight.w300,
-                              fontSize: 20
+                              fontSize: rem(10),
+                              fontWeight: FontWeight.w300
                           ),
                         ),
-                      ),
-                    )
+                        Container(
+                          height: MediaQuery.of(context).size.height * 0.08,
+                          padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: theme.cardColor
+                          ),
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            coinname,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w300,
+                                fontSize: rem(6)
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    SizedBox(height: rem(18),),
                   ],
+                ),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: NeumorphismButton(
+                    width: MediaQuery.of(context).size.width * 0.8,
+                    onPressed: (){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => BuyScreen(coinName: coinname, payment: dropdownValue.value,)),
+                      );
+                    },
+                    child: const Text(
+                      "BUY",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w300,
+                          fontSize: 20
+                      ),
+                    ),
+                  ),
                 )
+              ],
             )
         )
     );

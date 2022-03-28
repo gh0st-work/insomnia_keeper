@@ -2,9 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:insomnia_keeper_flutter/misc/animated_gradient_bg.dart';
 import 'package:insomnia_keeper_flutter/misc/assets.dart';
 import 'package:insomnia_keeper_flutter/misc/chart_filter.dart';
 import 'package:insomnia_keeper_flutter/misc/price.dart';
+import 'package:insomnia_keeper_flutter/misc/showbottomsheet.dart';
 import 'package:insomnia_keeper_flutter/widgets/asset_price_chart.dart';
 import 'package:insomnia_keeper_flutter/widgets/buy_settings.dart';
 import 'package:insomnia_keeper_flutter/widgets/history_screen.dart';
@@ -141,10 +143,13 @@ class CoinScreen extends HookWidget{
               ),
               onPressed: (){
                 showModalBottomSheet<void>(
+                    isScrollControlled: true,
                     context: context,
                     builder: (BuildContext context){
-                      return BuySettings(
-                        coinname: title,
+                      return ShowBottomSheet(
+                          child: BuySettings(
+                            coinname: title,
+                          )
                       );
                     }
                 );
@@ -169,11 +174,14 @@ class CoinScreen extends HookWidget{
               ),
               onPressed: (){
                 showModalBottomSheet<void>(
+                    isScrollControlled: true,
                     context: context,
                     builder: (BuildContext context){
-                      return SellSettings(
-                        coinname: title,
-                        coinsAmount: amountCoins,
+                      return ShowBottomSheet(
+                          child: SellSettings(
+                            coinname: title,
+                            coinsAmount: amountCoins,
+                          )
                       );
                     }
                   );
@@ -202,9 +210,10 @@ class CoinScreen extends HookWidget{
               ),
               onPressed: (){
                 showModalBottomSheet<void>(
+                    isScrollControlled: true,
                     context: context,
                     builder: (BuildContext context){
-                      return Send(coinname: title, amountCoins: amountCoins,);
+                      return ShowBottomSheet(child: Send(coinname: title, amountCoins: amountCoins,));
                     }
                 );
               },
@@ -226,12 +235,13 @@ class CoinScreen extends HookWidget{
               ),
               onPressed: (){
                 showModalBottomSheet<void>(
+                    isScrollControlled: true,
                     context: context,
-                  builder: (BuildContext context){
-                      return Recieve(coinname: title,);
-                  }
-                );
-              },
+                    builder: (BuildContext context){
+                        return ShowBottomSheet(child: Recieve(coinname: title,),);
+                    }
+                  );
+                },
               label: const Text(
                 'Receive',
                 style: TextStyle(
@@ -248,6 +258,7 @@ class CoinScreen extends HookWidget{
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final ScrollController _firstController = ScrollController();
     return Scaffold(
       appBar: AppBar(
@@ -261,38 +272,55 @@ class CoinScreen extends HookWidget{
         centerTitle: true,
       ),
 
-      body: ListView(
-        scrollDirection: Axis.vertical,
-        children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              _buildPrice(),
-              _buildPriceChart(context),
-              ChartFilter(),
-              _buildButtons(context),
-              Container(
-                margin: EdgeInsets.only(top: 20),
-                child: Text(
-                  "History", 
-                  style: TextStyle(
-                    fontWeight: FontWeight.w300,
-                    fontSize: rem(10)
+      body: Background(
+        child: ListView(
+          scrollDirection: Axis.vertical,
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  decoration: BoxDecoration(
+                    color: theme.cardColor,
+                    borderRadius: BorderRadius.circular(10)
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _buildPrice(),
+                      Divider(),
+                      _buildPriceChart(context),
+                      ChartFilter(),
+                    ],
                   ),
                 ),
-              ),
-              Container(
-                height: MediaQuery.of(context).size.height * 0.6,
-                child: Scrollbar(
-                  isAlwaysShown: true,
-                  controller: _firstController,
-                  child: History(historyType: "", coinName: title, isCoinPage: true,),
+                SizedBox(height: 10,),
+                _buildButtons(context),
+                Container(
+                  margin: EdgeInsets.only(top: 20),
+                  child: Text(
+                    "History",
+                    style: TextStyle(
+                        fontWeight: FontWeight.w300,
+                        fontSize: rem(10)
+                    ),
+                  ),
                 ),
-              )
-            ],
-          ),
-        ],
-      ),
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.6,
+                  child: Scrollbar(
+                    isAlwaysShown: true,
+                    controller: _firstController,
+                    child: History(historyType: "", coinName: title, isCoinPage: true,),
+                  ),
+                )
+              ],
+            ),
+          ],
+        ),
+      )
     );
   }
 

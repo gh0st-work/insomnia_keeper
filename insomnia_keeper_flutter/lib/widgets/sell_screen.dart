@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:insomnia_keeper_flutter/misc/neumorphism_button.dart';
 import 'package:insomnia_keeper_flutter/misc/rem.dart';
+import 'package:insomnia_keeper_flutter/misc/showbottomsheet.dart';
 import 'package:insomnia_keeper_flutter/widgets/deal_sell_screen.dart';
 
 class SellScreen extends HookWidget{
@@ -38,14 +39,16 @@ class SellScreen extends HookWidget{
                     isScrollControlled: true,
                     context: context,
                     builder: (BuildContext context){
-                      return SellDealScreen(
-                        coinName: coinName,
-                        payment: payment,
-                        amount: mokTrade.amountForPrice,
-                        price: mokTrade.price,
-                        total: mokTrade.coinsamount,
-                        priceFrom: mokTrade.from,
-                        priceTo: mokTrade.to,
+                      return ShowBottomSheet(
+                          child: SellDealScreen(
+                            coinName: coinName,
+                            payment: payment,
+                            amount: mokTrade.amountForPrice,
+                            price: mokTrade.price,
+                            total: mokTrade.coinsamount,
+                            priceFrom: mokTrade.from,
+                            priceTo: mokTrade.to,
+                          )
                       );
                     }
                 );
@@ -122,7 +125,8 @@ class SellScreen extends HookWidget{
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text("Enter the number of coins you want to sell", style: _tradeStyle,),
+          SizedBox(height: 10,),
+          Text("Enter the number of coins you want to sell", style: TextStyle(fontWeight: FontWeight.w300, fontSize: 18),),
           TextField(
             onChanged: (String value){},
             decoration: InputDecoration(
@@ -153,7 +157,7 @@ class SellScreen extends HookWidget{
               ),
             ],
           ),
-          Text("Enter your price", style: _tradeStyle,),
+          Text("Enter your price", style: TextStyle(fontWeight: FontWeight.w300, fontSize: 18),),
           TextField(
             onChanged: (String value){},
             decoration: InputDecoration(
@@ -161,7 +165,6 @@ class SellScreen extends HookWidget{
                 hintStyle: _textFieldStyle
             ),
           ),
-          SizedBox(height: 10,),
           NeumorphismButton(
               child: Text(
                 "Create deal",
@@ -214,9 +217,10 @@ class SellScreen extends HookWidget{
                 child: NeumorphismButton(
                   onPressed: (){
                     showModalBottomSheet<void>(
+                        isScrollControlled: true,
                         context: context,
                         builder: (BuildContext context){
-                          return _buildNewDeal();
+                          return ShowBottomSheet(child: _buildNewDeal());
                         }
                     );
                   },

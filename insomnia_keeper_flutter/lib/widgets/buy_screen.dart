@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:insomnia_keeper_flutter/misc/neumorphism_button.dart';
 import 'package:insomnia_keeper_flutter/misc/rem.dart';
+import 'package:insomnia_keeper_flutter/misc/showbottomsheet.dart';
 import 'package:insomnia_keeper_flutter/widgets/deal_buy_screen.dart';
 
 class BuyScreen extends HookWidget{
@@ -47,14 +48,16 @@ class BuyScreen extends HookWidget{
                     isScrollControlled: true,
                     context: context,
                     builder: (BuildContext context){
-                      return BuyDealScreen(
-                        coinName: coinName,
-                        payment: payment,
-                        amount: mokTrade.amountForPrice,
-                        price: mokTrade.price,
-                        total: mokTrade.coinsamount,
-                        priceFrom: mokTrade.from,
-                        priceTo: mokTrade.to,
+                      return ShowBottomSheet(
+                          child: BuyDealScreen(
+                            coinName: coinName,
+                            payment: payment,
+                            amount: mokTrade.amountForPrice,
+                            price: mokTrade.price,
+                            total: mokTrade.coinsamount,
+                            priceFrom: mokTrade.from,
+                            priceTo: mokTrade.to,
+                          )
                       );
                     }
                 );
@@ -131,7 +134,8 @@ class BuyScreen extends HookWidget{
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text("Enter your price", style: _tradeStyle,),
+          SizedBox(height: 10,),
+          Text("Enter your price", style: TextStyle(fontWeight: FontWeight.w300, fontSize: 18),),
           TextField(
             onChanged: (String value){},
             decoration: InputDecoration(
@@ -162,7 +166,7 @@ class BuyScreen extends HookWidget{
               ),
             ],
           ),
-          Text("Enter the number of coins you want to buy", style: _tradeStyle,),
+          Text("Enter the number of coins you want to buy", style: TextStyle(fontWeight: FontWeight.w300, fontSize: 18),),
           TextField(
             onChanged: (String value){},
             decoration: InputDecoration(
@@ -170,7 +174,6 @@ class BuyScreen extends HookWidget{
                 hintStyle: _textFieldStyle
             ),
           ),
-          SizedBox(height: 10,),
           NeumorphismButton(
               child: Text(
                 "Create deal",
@@ -224,9 +227,10 @@ class BuyScreen extends HookWidget{
               child: NeumorphismButton(
                 onPressed: (){
                   showModalBottomSheet<void>(
+                      isScrollControlled: true,
                       context: context,
                       builder: (BuildContext context){
-                        return _buildNewDeal();
+                        return ShowBottomSheet(child: _buildNewDeal());
                       }
                   );
                 },
