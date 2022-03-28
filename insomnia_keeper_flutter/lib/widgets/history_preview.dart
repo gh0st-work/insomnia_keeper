@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import '../misc/showbottomsheet.dart';
+
 class HistoryPreview extends HookWidget{
   final type;
   final coin;
@@ -41,6 +43,7 @@ class HistoryPreview extends HookWidget{
   Widget _buildDescription(BuildContext context) {
     final theme = Theme.of(context);
     return Container(
+      alignment: Alignment.center,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -172,9 +175,10 @@ class HistoryPreview extends HookWidget{
                   borderRadius: BorderRadius.circular(10))),
           onPressed: () {
             showModalBottomSheet<void>(
+                isScrollControlled: true,
                 context: context,
                 builder: (BuildContext context) {
-                  return _buildDescription(context);
+                  return ShowBottomSheet(child: _buildDescription(context),);
                 });
           },
           child: Row(

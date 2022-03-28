@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:insomnia_keeper_flutter/misc/animated_gradient_bg.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../misc/format.dart';
@@ -79,24 +80,24 @@ class Analytics extends HookWidget{
         ),
         centerTitle: true,
       ),
-      body: CustomScrollView(
-        slivers: [
-          SliverPadding(
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-            sliver: SliverToBoxAdapter(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildCircleChart(),
-                  _buildPriceCard(context),
-                ],
+      body: Background(
+        child: CustomScrollView(
+          slivers: [
+            SliverPadding(
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+              sliver: SliverToBoxAdapter(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildCircleChart(),
+                    _buildPriceCard(context),
+                  ],
+                ),
               ),
             ),
-          ),
-
-          SliverList(
-              delegate: SliverChildBuilderDelegate(
-                  (BuildContext context, int index){
+            SliverList(
+                delegate: SliverChildBuilderDelegate(
+                      (BuildContext context, int index){
                     MockCoin mockCoin = coins[index];
                     return Container(
                       height: 100,
@@ -109,65 +110,12 @@ class Analytics extends HookWidget{
                       ),
                     );
                   },
-                childCount: coins.length,
-              )
-          )
-
-
-          // SliverList(
-          //     delegate: SliverChildBuilderDelegate(
-          //         (BuildContext context, int index){
-          //           MockCoin mockCoin = coins[index];
-          //           return Container(
-          //             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-          //             margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-          //             decoration: BoxDecoration(
-          //               color: theme.cardColor,
-          //               borderRadius: BorderRadius.circular(10)
-          //             ),
-          //             child: Row(
-          //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //               crossAxisAlignment: CrossAxisAlignment.center,
-          //               children: [
-          //                 Text(mockCoin.title, style: TextStyle(fontWeight: FontWeight.w300, fontSize: 18),),
-          //                 Row(
-          //                   children: [
-          //                     Text("${mockCoin.amount}\$", style: TextStyle(fontWeight: FontWeight.w300, fontSize: 16),),
-          //                     SizedBox(width: 10,),
-          //                     Container(
-          //                       height: 10,
-          //                       width: 30,
-          //                       decoration: BoxDecoration(
-          //                           color: mockCoin.color,
-          //                           borderRadius: BorderRadius.circular(50)
-          //                       ),
-          //                     ),
-          //                   ],
-          //                 )
-          //               ],
-          //             ),
-          //           );
-          //         },
-          //       childCount: coins.length
-          //     )
-          // )
-        ],
+                  childCount: coins.length,
+                )
+            )
+          ],
+        ),
       ),
-      // body: Container(
-      //   padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-      //   child: ListView.builder(
-      //       itemCount: coins.length,
-      //       itemBuilder: (context, index){
-      //         return Column(
-      //           mainAxisAlignment: MainAxisAlignment.center,
-      //           children: [
-      //             _buildCircleChart(),
-      //             _buildPriceCard(context),
-      //           ],
-      //         );
-      //       }
-      //   )
-      // ),
     );
   }
 

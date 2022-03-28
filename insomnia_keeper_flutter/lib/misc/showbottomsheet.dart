@@ -29,16 +29,13 @@ class ShowBottomSheet extends HookWidget{
   @override
   Widget build(BuildContext context) {
     
-    return GestureDetector(
-      onTap: () => Navigator.of(context).pop(),
-      child: Container(
-        height: MediaQuery.of(context).size.height * 0.8,
-        child: Stack(
-          children: [
-            child,
-            _closeButton(context)
-          ],
-        ),
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.8,
+      child: Stack(
+        children: [
+          child,
+          _closeButton(context)
+        ],
       ),
     );
   }

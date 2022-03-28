@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:insomnia_keeper_flutter/misc/neumorphism_button.dart';
 import 'package:insomnia_keeper_flutter/widgets/buy_screen.dart';
 
+import '../misc/dropdown.dart';
 import '../misc/rem.dart';
 
 class BuySettings extends HookWidget{
@@ -17,115 +18,86 @@ class BuySettings extends HookWidget{
     'Item 5',
   ];
 
-  BuySettings({required this.coinname});
+  var coins = [
+    'BTC',
+    'TON',
+    'ETH',
+    'DOGE'
+  ];
+
+  BuySettings({this.coinname = ""});
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final dropdownValue = useState('Item 1');
+    final selectedPayment = useTextEditingController();
+    final payment = useState("");
+    final selectedCoin = useTextEditingController();
+    final coin = useState(coinname);
     return Container(
         alignment: Alignment.center,
         child: Container(
-            padding: EdgeInsets.symmetric(horizontal: rem(3), vertical: rem(6)),
-            width: MediaQuery.of(context).size.width * 0.85,
-            height: MediaQuery.of(context).size.height * 0.6,
-            child: Stack(
+            padding: EdgeInsets.symmetric(horizontal: rem(5), vertical: rem(6)),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Column(
                       children: [
-                        Column(
-                          children: [
-                            Text(
-                              "Give",
-                              style: TextStyle(
-                                  fontSize: rem(10),
-                                  fontWeight: FontWeight.w300
-                              ),
-                            ),
-                            Container(
-                              height: MediaQuery.of(context).size.height * 0.08,
-                              padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: theme.cardColor
-                              ),
-                              child: DropdownButton(
-                                isExpanded: true,
-                                underline: null,
-                                // Initial Value
-                                value: dropdownValue.value,
-                                // Down Arrow Icon
-                                icon: const Icon(Icons.keyboard_arrow_down),
-                                // Array list of items
-                                items: items.map((String items) {
-                                  return DropdownMenuItem(
-                                    value: items,
-                                    child: Text(
-                                      items,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w300,
-                                          fontSize: rem(6)
-                                      ),
-                                    ),
-                                  );
-                                }).toList(),
-                                // After selecting the desired option,it will
-                                // change button value to selected value
-                                onChanged: (String? newValue) {
-                                  dropdownValue.value = newValue!;
-                                },
-                              ),
-                            )
-                          ],
-                        ),
-                        SizedBox(height: 30),
                         Text(
-                          "Get",
+                          "Give",
                           style: TextStyle(
                               fontSize: rem(10),
                               fontWeight: FontWeight.w300
                           ),
                         ),
-                        Container(
-                          height: MediaQuery.of(context).size.height * 0.08,
-                          padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: theme.cardColor
-                          ),
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            coinname,
-                            style: TextStyle(
-                                fontWeight: FontWeight.w300,
-                                fontSize: rem(6)
-                            ),
-                          ),
+                        DropDownField(
+                          controller: selectedPayment,
+                          hintText: "Select any payment",
+                          enabled: true,
+                          required: true,
+                          strict: false,
+                          items: items,
+                          onValueChanged: (value){
+                            payment.value = value;
+                          },
                         )
                       ],
                     ),
-                    SizedBox(height: rem(18),),
+                    SizedBox(height: 30),
+                    Text(
+                      "Get",
+                      style: TextStyle(
+                          fontSize: rem(10),
+                          fontWeight: FontWeight.w300
+                      ),
+                    ),
+                    DropDownField(
+                      controller: selectedCoin,
+                      hintText: coinname != "" ? coin.value : "Select any coin",
+                      enabled: true,
+                      required: true,
+                      strict: false,
+                      items: coins,
+                      onValueChanged: (value){
+                        coin.value = value;
+                      },
+                    )
                   ],
                 ),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: NeumorphismButton(
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    onPressed: (){
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => BuyScreen(coinName: coinname, payment: dropdownValue.value,)),
-                      );
-                    },
-                    child: const Text(
-                      "BUY",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w300,
-                          fontSize: 20
-                      ),
+                SizedBox(height: rem(18),),
+                NeumorphismButton(
+                  onPressed: (){
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => BuyScreen(coinName: coin.value, payment: payment.value,)),
+                    );
+                  },
+                  child: const Text(
+                    "BUY",
+                    style: TextStyle(
+                        fontWeight: FontWeight.w300,
+                        fontSize: 20
                     ),
                   ),
                 )

@@ -6,9 +6,8 @@ import 'package:flutter_qr_bar_scanner/qr_bar_scanner_camera.dart';
 
 class Send extends HookWidget{
   final String coinname;
-  final double amountCoins;
 
-  Send({required this.coinname, required this.amountCoins});
+  Send({required this.coinname});
 
   final TextStyle _textFieldStyle = TextStyle(fontWeight: FontWeight.w300, fontSize: 20);
 

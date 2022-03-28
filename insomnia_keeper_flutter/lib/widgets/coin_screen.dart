@@ -213,7 +213,7 @@ class CoinScreen extends HookWidget{
                     isScrollControlled: true,
                     context: context,
                     builder: (BuildContext context){
-                      return ShowBottomSheet(child: Send(coinname: title, amountCoins: amountCoins,));
+                      return ShowBottomSheet(child: Send(coinname: title,));
                     }
                 );
               },
