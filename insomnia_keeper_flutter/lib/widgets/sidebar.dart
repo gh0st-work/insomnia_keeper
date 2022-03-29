@@ -1,6 +1,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:insomnia_keeper_flutter/misc/rem.dart';
 import 'package:insomnia_keeper_flutter/widgets/receive_send_screen.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter/material.dart';
@@ -17,14 +18,24 @@ class SideBar extends HookWidget{
 
   }
 
-  void choiceAction(String choice){
-    print("working");
-  }
+  List<String> languages = [
+    "Default",
+    "Rus",
+    "Eng",
+    "Deutsch",
+    "Italiano",
+    "Polski",
+    "Ukrainian"
+  ];
 
   List<String> currency = [
-    "USD",
-    "RUB",
-    "EUR"
+    "US Dollar",
+    "Yuan",
+    "Euro",
+    "Pound",
+    "Rupee",
+    "Yen",
+    "Ruble"
   ];
 
   Widget _buildMenuItem(BuildContext context, String text, IconData icon, Widget? route) {
@@ -61,6 +72,31 @@ class SideBar extends HookWidget{
 
     final screenWidth = MediaQuery.of(context).size.width;
     final theme = Theme.of(context);
+
+    final _selectedLanguage = useState(languages[0]);
+
+    Widget _languageSelect(String language){
+      return ListTile(
+        title: Text(language, style: _groupStyle,),
+        onTap: (){
+          _selectedLanguage.value = language;
+          Navigator.of(context).pop();
+          },
+      );
+    }
+
+    final _selectedCurrency = useState(currency[0]);
+
+    Widget _currencySelect(String currency){
+      return ListTile(
+        title: Text(currency, style: _groupStyle),
+        onTap: (){
+          _selectedCurrency.value = currency;
+          Navigator.of(context).pop();
+        },
+      );
+    }
+
     return StreamBuilder<bool>(
       initialData: false,
       stream: isSideBarOpenedStreamController.stream,
@@ -105,7 +141,6 @@ class SideBar extends HookWidget{
                       Divider(
                         height: 64,
                         thickness: 0.5,
-                        //color: Colors.white.withOpacity(0.3),
                         indent: 32,
                         endIndent: 32,
                       ),
@@ -130,6 +165,54 @@ class SideBar extends HookWidget{
                       ),
                       Divider(),
                       ListTile(
+                        leading: FaIcon(FontAwesomeIcons.globe),
+                        title: Text("Select Language", style: _groupStyle,),
+                        subtitle: Text(_selectedLanguage.value, style: TextStyle(fontWeight: FontWeight.w300),),
+                        onTap: (){
+                          showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text("Select Language"),
+                                titleTextStyle: TextStyle(fontWeight: FontWeight.w300, fontSize: rem(6)),
+                                content: Container(
+                                  width: 200,
+                                  height: 300,
+                                  child: ListView.builder(
+                                    itemCount: languages.length,
+                                    itemBuilder: (BuildContext context, int index) {
+                                      return _languageSelect(languages[index]);
+                                    },
+                                  ),
+                                ),
+                              )
+                          );
+                        },
+                      ),
+                      ListTile(
+                        leading: FaIcon(FontAwesomeIcons.coins),
+                        title: Text("Select Language", style: _groupStyle,),
+                        subtitle: Text(_selectedCurrency.value, style: TextStyle(fontWeight: FontWeight.w300),),
+                        onTap: (){
+                          showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text("Select Currency"),
+                                titleTextStyle: TextStyle(fontWeight: FontWeight.w300, fontSize: rem(6)),
+                                content: Container(
+                                  width: 200,
+                                  height: 300,
+                                  child: ListView.builder(
+                                    itemCount: currency.length,
+                                    itemBuilder: (BuildContext context, int index) {
+                                      return _currencySelect(currency[index]);
+                                    },
+                                  ),
+                                ),
+                              )
+                          );
+                        },
+                      ),
+                      ListTile(
                         leading: const Text(
                           "Light theme",
                           style: TextStyle(
@@ -145,39 +228,31 @@ class SideBar extends HookWidget{
                             }
                         ),
                       ),
-                      PopupMenuButton<String>(
-                        child: _buildMenuItem(context, "Select currency", FontAwesomeIcons.coins, null),
-                        initialValue: currency[0],
-                        offset: Offset(50, 50),
-                        onSelected: choiceAction,
-                        itemBuilder: (context){
-                          return currency.map((String choice) {
-                            return PopupMenuItem<String>(
-                                value: choice,
-                                child: Text(choice)
-                            );
-                          }).toList();
+                      ListTile(
+                        leading: FaIcon(FontAwesomeIcons.arrowRightFromBracket),
+                        title: Text("Log out", style: _groupStyle,),
+                        onTap: (){
+                          showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text("Log out"),
+                                titleTextStyle: TextStyle(fontWeight: FontWeight.w300, fontSize: rem(6)),
+                                content: Text("Are you sure you want to exit?", style: _groupStyle,),
+                                actions: [
+                                  TextButton(
+                                      onPressed: (){
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text("Cancel", style: TextStyle(fontWeight: FontWeight.w300, fontSize: rem(5)),)
+                                  ),
+                                  TextButton(
+                                      onPressed: (){}, 
+                                      child: Text("Exit", style: TextStyle(fontWeight: FontWeight.w300, fontSize: rem(5)))
+                                  ),
+                                ],
+                              )
+                          );
                         },
-                      ),
-                      PopupMenuButton<String>(
-                        child: _buildMenuItem(context, "Select language", FontAwesomeIcons.globe, null),
-                        initialValue: currency[0],
-                        offset: Offset(50, 50),
-                        onSelected: choiceAction,
-                        itemBuilder: (context){
-                          return currency.map((String choice) {
-                            return PopupMenuItem<String>(
-                                value: choice,
-                                child: Text(choice)
-                            );
-                          }).toList();
-                        },
-                      ),
-                      _buildMenuItem(
-                          context,
-                          "Log out",
-                          FontAwesomeIcons.arrowRightFromBracket,
-                          null
                       ),
                     ],
                   ),
