@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:insomnia_keeper_flutter/data/global/actions.dart';
@@ -9,7 +8,6 @@ import 'package:insomnia_keeper_flutter/data/personalAccount/actions.dart';
 import 'package:insomnia_keeper_flutter/data/profile/actions.dart';
 import 'package:insomnia_keeper_flutter/misc/flutter_redux_hooks.dart';
 import 'package:insomnia_keeper_flutter/settings.dart' as settings;
-import 'package:insomnia_keeper_flutter/widgets/lock_screen.dart';
 
 import '../data/misc.dart';
 import '../misc/to_bool.dart';

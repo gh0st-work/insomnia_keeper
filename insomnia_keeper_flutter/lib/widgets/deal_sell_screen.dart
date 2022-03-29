@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:insomnia_keeper_flutter/misc/neumorphism_button.dart';
@@ -74,8 +73,6 @@ class SellDealScreen extends HookWidget{
               TextField(
                 onChanged: (String value){},
                 decoration: InputDecoration(
-                  //hintText: "$priceFrom - $priceTo",
-                  // hintStyle: _textFieldStyle
                 ),
               ),
             ],

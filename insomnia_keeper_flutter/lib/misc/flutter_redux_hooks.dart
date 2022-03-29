@@ -3,7 +3,6 @@ library flutter_redux;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart'
     show use, Hook, HookState, useStream;
-import 'package:insomnia_keeper_flutter/data/misc.dart';
 import 'package:redux/redux.dart';
 
 class StoreProvider<S> extends InheritedWidget {

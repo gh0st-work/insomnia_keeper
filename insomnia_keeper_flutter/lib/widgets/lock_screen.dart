@@ -3,13 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:insomnia_keeper_flutter/misc/flutter_redux_hooks.dart';
-import 'package:insomnia_keeper_flutter/widgets/wallet_screen.dart';
 import 'package:local_auth/local_auth.dart';
 
 import '../cache/storage.dart';
 import '../data/ui/reducer.dart';
 import '../misc/buttons.dart';
-import '../misc/plasmas.dart';
 import '../misc/rem.dart';
 import 'animations.dart';
 

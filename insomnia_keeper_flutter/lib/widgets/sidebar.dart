@@ -1,12 +1,12 @@
-
-import 'package:flutter/cupertino.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:insomnia_keeper_flutter/misc/rem.dart';
 import 'package:insomnia_keeper_flutter/widgets/receive_send_screen.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
+import '../misc/currency_select.dart';
+import '../misc/language_select.dart';
+import '../misc/logout.dart';
 import 'buy_sell_screen.dart';
 
 class SideBar extends HookWidget{
@@ -18,35 +18,22 @@ class SideBar extends HookWidget{
 
   }
 
-  List<String> languages = [
-    "Default",
-    "Rus",
-    "Eng",
-    "Deutsch",
-    "Italiano",
-    "Polski",
-    "Ukrainian"
-  ];
-
-  List<String> currency = [
-    "US Dollar",
-    "Yuan",
-    "Euro",
-    "Pound",
-    "Rupee",
-    "Yen",
-    "Ruble"
-  ];
-
-  Widget _buildMenuItem(BuildContext context, String text, IconData icon, Widget? route) {
+  Widget _buildThemeSwitch(){
     return ListTile(
-      title: Text(text, style: _groupStyle,),
-      leading: FaIcon(icon),
-      onTap: route == null ? (){} : (){
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (BuildContext context) => route)
-        );
-      },
+      leading: const Text(
+        "Light theme",
+        style: TextStyle(
+          fontSize: 16,
+          //fontWeight: FontWeight.w300
+        ),
+      ),
+      title: Switch(
+          value: _isSwitched.value,
+          onChanged: (value){
+            _isSwitched.value = value;
+            _changeTheme(value);
+          }
+      ),
     );
   }
 
@@ -72,30 +59,6 @@ class SideBar extends HookWidget{
 
     final screenWidth = MediaQuery.of(context).size.width;
     final theme = Theme.of(context);
-
-    final _selectedLanguage = useState(languages[0]);
-
-    Widget _languageSelect(String language){
-      return ListTile(
-        title: Text(language, style: _groupStyle,),
-        onTap: (){
-          _selectedLanguage.value = language;
-          Navigator.of(context).pop();
-          },
-      );
-    }
-
-    final _selectedCurrency = useState(currency[0]);
-
-    Widget _currencySelect(String currency){
-      return ListTile(
-        title: Text(currency, style: _groupStyle),
-        onTap: (){
-          _selectedCurrency.value = currency;
-          Navigator.of(context).pop();
-        },
-      );
-    }
 
     return StreamBuilder<bool>(
       initialData: false,
@@ -144,116 +107,39 @@ class SideBar extends HookWidget{
                         indent: 32,
                         endIndent: 32,
                       ),
+                      //menu block
                       ListTile(
                         title: Text("Manage", style: _groupStyle,),
                       ),
                       Divider(),
-                      _buildMenuItem(
-                          context,
-                          "Buy/sell",
-                          FontAwesomeIcons.basketShopping,
-                          BuySellScreen()
+                      ListTile(
+                        title: Text("Buy/sell", style: _groupStyle,),
+                        leading: FaIcon(FontAwesomeIcons.basketShopping),
+                        onTap: (){
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (BuildContext context) => BuySellScreen())
+                          );
+                        },
                       ),
-                      _buildMenuItem(
-                          context,
-                          "Receive/send",
-                          FontAwesomeIcons.moneyBillTransfer,
-                          ReceiveSendScreen()
+                      ListTile(
+                        title: Text("Receive/send", style: _groupStyle,),
+                        leading: FaIcon(FontAwesomeIcons.moneyBillTransfer),
+                        onTap: (){
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (BuildContext context) => ReceiveSendScreen())
+                          );
+                        },
                       ),
+
+                      //settings block
                       ListTile(
                         title: Text("Preferences", style: _groupStyle,),
                       ),
                       Divider(),
-                      ListTile(
-                        leading: FaIcon(FontAwesomeIcons.globe),
-                        title: Text("Select Language", style: _groupStyle,),
-                        subtitle: Text(_selectedLanguage.value, style: TextStyle(fontWeight: FontWeight.w300),),
-                        onTap: (){
-                          showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                title: Text("Select Language"),
-                                titleTextStyle: TextStyle(fontWeight: FontWeight.w300, fontSize: rem(6)),
-                                content: Container(
-                                  width: 200,
-                                  height: 300,
-                                  child: ListView.builder(
-                                    itemCount: languages.length,
-                                    itemBuilder: (BuildContext context, int index) {
-                                      return _languageSelect(languages[index]);
-                                    },
-                                  ),
-                                ),
-                              )
-                          );
-                        },
-                      ),
-                      ListTile(
-                        leading: FaIcon(FontAwesomeIcons.coins),
-                        title: Text("Select Language", style: _groupStyle,),
-                        subtitle: Text(_selectedCurrency.value, style: TextStyle(fontWeight: FontWeight.w300),),
-                        onTap: (){
-                          showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                title: Text("Select Currency"),
-                                titleTextStyle: TextStyle(fontWeight: FontWeight.w300, fontSize: rem(6)),
-                                content: Container(
-                                  width: 200,
-                                  height: 300,
-                                  child: ListView.builder(
-                                    itemCount: currency.length,
-                                    itemBuilder: (BuildContext context, int index) {
-                                      return _currencySelect(currency[index]);
-                                    },
-                                  ),
-                                ),
-                              )
-                          );
-                        },
-                      ),
-                      ListTile(
-                        leading: const Text(
-                          "Light theme",
-                          style: TextStyle(
-                            fontSize: 16,
-                            //fontWeight: FontWeight.w300
-                          ),
-                        ),
-                        title: Switch(
-                            value: _isSwitched.value,
-                            onChanged: (value){
-                              _isSwitched.value = value;
-                              _changeTheme(value);
-                            }
-                        ),
-                      ),
-                      ListTile(
-                        leading: FaIcon(FontAwesomeIcons.arrowRightFromBracket),
-                        title: Text("Log out", style: _groupStyle,),
-                        onTap: (){
-                          showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                title: Text("Log out"),
-                                titleTextStyle: TextStyle(fontWeight: FontWeight.w300, fontSize: rem(6)),
-                                content: Text("Are you sure you want to exit?", style: _groupStyle,),
-                                actions: [
-                                  TextButton(
-                                      onPressed: (){
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: Text("Cancel", style: TextStyle(fontWeight: FontWeight.w300, fontSize: rem(5)),)
-                                  ),
-                                  TextButton(
-                                      onPressed: (){}, 
-                                      child: Text("Exit", style: TextStyle(fontWeight: FontWeight.w300, fontSize: rem(5)))
-                                  ),
-                                ],
-                              )
-                          );
-                        },
-                      ),
+                      SelectLanguage(),
+                      SelectCurrency(),
+                      _buildThemeSwitch(),
+                      Logout(),
                     ],
                   ),
                 ),

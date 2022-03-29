@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_qr_bar_scanner/qr_bar_scanner_camera.dart';
-import 'package:insomnia_keeper_flutter/widgets/send_screen.dart';
 import 'package:share/share.dart';
 
 import '../misc/dropdown.dart';

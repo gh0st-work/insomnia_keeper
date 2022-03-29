@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:insomnia_keeper_flutter/misc/rem.dart';
 
 class CircleButton extends HookWidget {
   final double paddingSize;

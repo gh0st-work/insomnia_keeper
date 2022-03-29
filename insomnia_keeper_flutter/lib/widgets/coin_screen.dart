@@ -1,9 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:insomnia_keeper_flutter/misc/animated_gradient_bg.dart';
-import 'package:insomnia_keeper_flutter/misc/assets.dart';
 import 'package:insomnia_keeper_flutter/misc/chart_filter.dart';
 import 'package:insomnia_keeper_flutter/misc/price.dart';
 import 'package:insomnia_keeper_flutter/misc/showbottomsheet.dart';
@@ -30,61 +28,6 @@ class CoinScreen extends HookWidget{
     required this.percentChange
   });
 
-  List tradeButtons = [
-    ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        minimumSize: const Size.fromHeight(50),
-      ),
-      onPressed: (){},
-      child: const Text(
-        'Buy',
-        style: TextStyle(
-            fontWeight: FontWeight.w300,
-            fontSize: 26
-        ),
-      ),
-    ),
-    ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        minimumSize: const Size.fromHeight(50),
-      ),
-      onPressed: (){},
-      child: const Text(
-        'Sell',
-        style: TextStyle(
-            fontWeight: FontWeight.w300,
-            fontSize: 26
-        ),
-      ),
-    ),
-    ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        minimumSize: const Size.fromHeight(50),
-      ),
-      onPressed: (){},
-      child: const Text(
-        'Trade',
-        style: TextStyle(
-            fontWeight: FontWeight.w300,
-            fontSize: 26
-        ),
-      ),
-    ),
-    ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        minimumSize: const Size.fromHeight(50),
-      ),
-      onPressed: (){},
-      child: const Text(
-        'Make a deal',
-        style: TextStyle(
-            fontWeight: FontWeight.w300,
-            fontSize: 26
-        ),
-      ),
-    ),
-  ];
-
   Widget _buildPrice(){
     return Container(
       padding: EdgeInsets.all(rem(10)),
@@ -102,27 +45,6 @@ class CoinScreen extends HookWidget{
       height: MediaQuery.of(context).size.height * 0.3,
       width: MediaQuery.of(context).size.width * 0.95,
       child: PriceChart(lineColor: color),
-    );
-  }
-
-  Widget _buildStatistics(){
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: rem(5)),
-      child: Stats(),
-    );
-  }
-
-  Widget _buildDescription(){
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: rem(5), vertical: rem(5)),
-      child: Text(
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis "
-            "nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate "
-            "velit esse cillum dolore eu "
-            "fugiat nulla pariatur. "
-            "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-        textAlign: TextAlign.justify,
-      ),
     );
   }
 

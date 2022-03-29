@@ -32,15 +32,15 @@ class History extends HookWidget {
         transferDescription: "description",
         comission: "0000.1",
         message: "hi there"),
-    // MokTransfers(
-    //     type: "buy",
-    //     coin: "TON",
-    //     date: "02.01.2022",
-    //     value: "100",
-    //     senderWallet: "dadasda@!2fasfaf",
-    //     transferDescription: "description",
-    //     comission: "0000.1",
-    //     message: "hi there"),
+    MokTransfers(
+        type: "buy",
+        coin: "TON",
+        date: "02.01.2022",
+        value: "100",
+        senderWallet: "dadasda@!2fasfaf",
+        transferDescription: "description",
+        comission: "0000.1",
+        message: "hi there"),
     MokTransfers(
         type: "receive",
         coin: "TON",
@@ -50,15 +50,15 @@ class History extends HookWidget {
         transferDescription: "description",
         comission: "0000.1",
         message: "hi there"),
-    // MokTransfers(
-    //     type: "sell",
-    //     coin: "TON",
-    //     date: "01.01.2022",
-    //     value: "100",
-    //     senderWallet: "dadasda@!2fasfaf",
-    //     transferDescription: "description",
-    //     comission: "0000.1",
-    //     message: "hi there"),
+    MokTransfers(
+        type: "sell",
+        coin: "TON",
+        date: "01.01.2022",
+        value: "100",
+        senderWallet: "dadasda@!2fasfaf",
+        transferDescription: "description",
+        comission: "0000.1",
+        message: "hi there"),
   ];
 
 
@@ -79,7 +79,7 @@ class History extends HookWidget {
         child: Container(
           margin: EdgeInsets.symmetric(vertical: 20),
           width: MediaQuery.of(context).size.width * 0.9,
-          child: _transfers.length != 0 ? ListView.builder(
+          child: _transfers.isNotEmpty ? ListView.builder(
               scrollDirection: Axis.vertical,
               itemCount: _transfers.length,
               itemBuilder: (context, index){
@@ -99,7 +99,7 @@ class History extends HookWidget {
               :  Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         "It`s empty now",
                         style: TextStyle(
                             fontWeight: FontWeight.w300,

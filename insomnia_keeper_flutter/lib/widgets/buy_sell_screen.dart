@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:insomnia_keeper_flutter/widgets/sell_settings.dart';
 
-import '../misc/dropdown.dart';
 import '../misc/showbottomsheet.dart';
 import 'buy_settings.dart';
 import 'history_screen.dart';
@@ -18,8 +17,6 @@ class BuySellScreen extends HookWidget{
 
   @override
   Widget build(BuildContext context) {
-    final selectedCoin = useTextEditingController();
-    final coin = useState("");
 
     return Scaffold(
       appBar: AppBar(

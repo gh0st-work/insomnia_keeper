@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:insomnia_keeper_flutter/misc/price.dart';
-import 'package:insomnia_keeper_flutter/widgets/asset_price_chart.dart';
 
 import '../misc/format.dart';
 import '../misc/rem.dart';
