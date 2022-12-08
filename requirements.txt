@@ -2,7 +2,7 @@ asgiref==3.5.0
 asn1crypto==1.5.0
 bit==0.8.0
 bitarray==1.2.2
-certifi==2021.10.8
+certifi==2022.12.7
 cffi==1.15.0
 charset-normalizer==2.0.12
 coincurve==17.0.0
