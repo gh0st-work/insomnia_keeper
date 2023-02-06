@@ -29,7 +29,7 @@ eth-utils==2.0.0
 hexbytes==0.2.2
 idna==3.3
 Js2Py==0.71
-oauthlib==3.2.0
+oauthlib==3.2.2
 packaging==21.3
 parsimonious==0.8.1
 pycparser==2.21
