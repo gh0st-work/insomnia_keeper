@@ -6,7 +6,7 @@ certifi==2021.10.8
 cffi==1.15.0
 charset-normalizer==2.0.12
 coincurve==17.0.0
-cryptography==36.0.1
+cryptography==39.0.1
 cytoolz==0.11.2
 defusedxml==0.7.1
 Deprecated==1.2.13
