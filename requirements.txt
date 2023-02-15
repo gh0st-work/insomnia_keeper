@@ -10,7 +10,7 @@ cryptography==36.0.1
 cytoolz==0.11.2
 defusedxml==0.7.1
 Deprecated==1.2.13
-Django==4.0.7
+Django==4.1.7
 django-allauth==0.49.0
 django-ckeditor==6.2.0
 django-cors-headers==3.11.0
